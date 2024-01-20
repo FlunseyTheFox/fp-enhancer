@@ -636,7 +636,17 @@ live-chat.ng-star-inserted {
     border: 1px solid #333;
 }
 
+.DescriptionBodyComponent .expand .button {
+    color: #fff !important;
+}
 
+.DescriptionBodyComponent .expand .button:hover {
+    color: #0094c8 !important;
+}
+
+.DescriptionBodyComponent .text-container.open a {
+    color: #00bdff !important;
+}
 
 .live-chat-wrapper .live-chat-sizer {
     border-left: none !important;
@@ -781,6 +791,18 @@ element.style {
     color: #fff !important;
 }
 
+.ReactUserSecuritySettings .auth-group-section .method-header .icon {
+    color: #fff !important;
+}
+
+.ReactUserSecuritySettings .SettingsSecuritySection .security-section-title {
+    color: #fff !important;
+}
+
+.ReactUserActivate2FA .qr-break .step-section .step-title {
+    color: #fff !important;
+}
+
 /* User Profile */
 .ReactUserProfileActivityFeed .activity-feed-period .feed-title {
     color: #fff !important;
@@ -792,4 +814,54 @@ element.style {
 
 .ReactUserProfileActivityFeed .activity-feed-period .feed-list .feed-item .item-content .content-comment {
     color: #aaa !important;
+}
+
+
+/* Support Portal */
+.support-content {
+    background: #111 !important;
+    color: #fff !important;
+}
+
+.support-page {
+    background: #111 !important;
+}
+
+.support-content .section-title {
+    color: #fff !important;
+}
+
+.support-content .section-description {
+    color: #aaa !important;
+}
+
+.modal-title {
+    color: #fff !important;
+}
+
+label {
+    color: #fff !important;
+}
+
+/* Search Bar */
+.search-form .form-group {
+    background: #222 !important;
+    border: 1px solid #333 !important;
+}
+
+/* input box support area */
+input#search.form-control {
+    background: #333 !important;
+    color: #fff !important;
+    border: 1px solid #333 !important;
+}
+
+select {
+    background: #333 !important;
+    color: #fff !important;
+    border: 1px solid #333 !important;
+}
+
+.modal-dialog {
+    color: #fff !important;
 }
