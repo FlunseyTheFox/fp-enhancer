@@ -1,0 +1,64 @@
+<!-- Settings popup to do the enabling and disabling for different aspects -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Floatplane Enhancer</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    label {
+      display: inline-block;
+      background-color: #fff;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+      margin: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    input {
+      margin-right: 8px;
+    }
+
+    input:checked + label {
+      background-color: #4CAF50;
+      color: #fff;
+    }
+
+    .acknowledgments {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #777;
+    }
+
+    .acknowledgments a {
+      color: #007BFF;
+      text-decoration: none;
+    }
+
+    label {
+      display: inline-block;
+      width: 48%;
+    }
+  </style>
+</head>
+<body>
+  <label>
+    <input type="checkbox" id="enableDarkTheme"> Enable Dark Theme
+  </label><label>
+    <input type="checkbox" id="enableAutoCaption"> Enable Auto Caption
+  </label>
+  <div class="acknowledgments">
+    Special thanks to <a href="https://furrydev.xyz" target="_blank">Zenull</a> for code contributions and <a href="https://gc.omg.lol/" target="_blank">Gradient Cat</a> for the icon.
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
