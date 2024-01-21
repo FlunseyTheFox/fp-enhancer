@@ -22,7 +22,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["dark-theme.css"],
+      "resources": ["dark-theme.css", "timestamp.js"],
       "matches": ["*://floatplane.com/*", "*://www.floatplane.com/*"]
     }
   ],
