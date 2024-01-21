@@ -3,7 +3,7 @@
   "name": "Floatplane Enhancer",
   "version": "1.0",
   "description": "Enhances the Floatplane experience",
-  "permissions": ["activeTab", "scripting", "storage"],
+  "permissions": ["activeTab", "storage"],
   "background": {
     "service_worker": "background.js"
   },
