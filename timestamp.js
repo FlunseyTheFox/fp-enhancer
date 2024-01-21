@@ -43,7 +43,7 @@ function handleTimestampClick(event) {
     // Seek to the specific time in the video
     video.currentTime = timeInSeconds;
 
-    // Play the video (optional)
+    // Play the video if paused
     if (video.paused) {
       video.play();
     }
@@ -66,6 +66,7 @@ function handleMutations(mutationsList) {
 }
 
 // Use MutationObserver to listen for changes in the DOM
+// When more comments are loaded this is needed
 const observer = new MutationObserver(handleMutations);
 observer.observe(document.body, { subtree: true, childList: true });
 
@@ -87,11 +88,12 @@ document.body.addEventListener('click', (event) => {
 });
 
 // Handle video change event
+// If this was not done they it would error out when the video changes
 document.addEventListener('DOMContentLoaded', () => {
   const observer = new MutationObserver((mutationsList) => {
     mutationsList.forEach((mutation) => {
       if (mutation.type === 'attributes' && mutation.attributeName === 'src') {
-        // Trigger a custom event to handle video change in content.js
+        // Dispatch a custom event to handle the video change
         const videoChangeEvent = new Event('videoChange');
         document.dispatchEvent(videoChangeEvent);
       }

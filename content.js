@@ -1,4 +1,3 @@
-// content.js
 chrome.storage.sync.get(['enableDarkTheme', 'enableAutoCaption', 'enableTimestamps'], function (data) {
     const defaultValues = {
       enableDarkTheme: true,
@@ -20,7 +19,7 @@ chrome.storage.sync.get(['enableDarkTheme', 'enableAutoCaption', 'enableTimestam
       applyTimestamps();
     }
   });
-  
+  // Apply dark theme
   function applyDarkTheme() {
     const styleLink = document.createElement('link');
     styleLink.rel = 'stylesheet';
@@ -28,7 +27,7 @@ chrome.storage.sync.get(['enableDarkTheme', 'enableAutoCaption', 'enableTimestam
     document.head.appendChild(styleLink);
     console.log('Dark Theme applied.');
   }
-  
+  // Select the captioned option
   function selectCaptionedOption() {
     const captionedElement = document.querySelector('.AttachmentComponentNeue .title[title="Captioned"]');
     if (captionedElement) {
@@ -37,7 +36,7 @@ chrome.storage.sync.get(['enableDarkTheme', 'enableAutoCaption', 'enableTimestam
       console.log('Captioned option selected.');
     }
   }
-  
+  // Apply timestamps
   function applyTimestamps() {
     const timestampScript = document.createElement('script');
     timestampScript.src = chrome.runtime.getURL('timestamp.js');
@@ -47,14 +46,15 @@ chrome.storage.sync.get(['enableDarkTheme', 'enableAutoCaption', 'enableTimestam
   
   // Listen for changes in the storage and reapply features
   chrome.storage.onChanged.addListener(function (changes) {
+    // If enable darktheme is true, apply dark theme
     if (changes.enableDarkTheme && changes.enableDarkTheme.newValue) {
       applyDarkTheme();
     }
-  
+    // If enable auto caption is true, select captioned option
     if (changes.enableAutoCaption && changes.enableAutoCaption.newValue) {
       selectCaptionedOption();
     }
-  
+    // If enable timestamps is true, apply timestamps JS file (timestamp.js)
     if (changes.enableTimestamps && changes.enableTimestamps.newValue) {
       applyTimestamps();
     }

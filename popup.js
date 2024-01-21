@@ -1,8 +1,7 @@
-// popup.js
 document.addEventListener('DOMContentLoaded', function () {
   const enableDarkThemeCheckbox = document.getElementById('enableDarkTheme');
   const enableAutoCaptionCheckbox = document.getElementById('enableAutoCaption');
-  const enableTimestampsCheckbox = document.getElementById('enableTimestamps'); // Add this line
+  const enableTimestampsCheckbox = document.getElementById('enableTimestamps');
 
   // Load user's preferences from storage and update checkbox states
   chrome.storage.sync.get(['enableDarkTheme', 'enableAutoCaption', 'enableTimestamps'], function (data) {
