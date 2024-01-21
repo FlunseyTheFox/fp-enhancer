@@ -1,27 +1,29 @@
-<!-- Settings popup to do the enabling and disabling for different aspects -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Floatplane Enhancer</title>
+  <title>Floatplane Enhancer Settings</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       text-align: center;
       padding: 20px;
-      background-color: #f4f4f4;
+      background-color: #f8f8f8; /* Lighter background color */
+      width: 400px; /* Set the desired width */
+      height: 300px; /* Set the desired height */
     }
 
     label {
       display: inline-block;
       background-color: #fff;
-      border: 2px solid #ddd;
+      border: 1px solid #ccc; /* Light border */
       border-radius: 5px;
-      padding: 10px;
-      margin: 10px;
+      padding: 15px;
+      margin: 10px 10px 10px 0; /* Added margin for spacing between options */
       cursor: pointer;
       transition: background-color 0.3s ease;
+      width: 30%; /* Adjusted width for better spacing */
     }
 
     input {
@@ -43,18 +45,17 @@
       color: #007BFF;
       text-decoration: none;
     }
-
-    label {
-      display: inline-block;
-      width: 48%;
-    }
   </style>
 </head>
 <body>
   <label>
-    <input type="checkbox" id="enableDarkTheme"> Enable Dark Theme
-  </label><label>
-    <input type="checkbox" id="enableAutoCaption"> Enable Auto Caption
+    <input type="checkbox" id="enableDarkTheme"> Dark Theme
+  </label>
+  <label>
+    <input type="checkbox" id="enableAutoCaption"> Auto Caption
+  </label>
+  <label>
+    <input type="checkbox" id="enableTimestamps"> Timestamps
   </label>
   <div class="acknowledgments">
     Special thanks to <a href="https://furrydev.xyz" target="_blank">Zenull</a> for code contributions and <a href="https://gc.omg.lol/" target="_blank">Gradient Cat</a> for the icon.
