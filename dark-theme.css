@@ -313,12 +313,26 @@ div.post-tile-age {
     color: #aaa;
 }
 
+.ReactCommentBodyComponent .expand .button {
+    color: #fff !important;
+}
+
+.ReactCommentBodyComponent .expand .button:hover {
+    color: #0094c8 !important;
+}
+
+/* Comment section gradient color */
+.ReactCommentBodyComponent .overflow:after {
+    background: linear-gradient(to top, #1a1a1a 0%, rgba(255, 251, 251, 0) 70%);
+
+}
+
 /* Download dropdown */
 .download-container .dropdown {
     background: #333 !important;
 }
 
-.download-container .dropdown .dropdown-item {
+.PlayerDownloadComponent .download-item {
     color: #ccc !important;
 }
 
