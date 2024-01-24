@@ -836,6 +836,9 @@ element.style {
     color: #aaa !important;
 }
 
+.ReactSettingsForm.list-item-wrapper {
+    background: #222 !important;
+}
 
 /* Support Portal */
 .support-content {
