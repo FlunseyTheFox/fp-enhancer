@@ -1,0 +1,54 @@
+body.status-page {
+    background-color: #1c1c1c;
+    color: #f5f5f5;
+}
+
+.panel.panel-message.incident {
+    background-color: #1c1c1c;
+    border: 1px solid #2d2d2d;
+    color: #f5f5f5;
+}
+.markdown-body  {
+    color: #f5f5f5;
+}
+
+p, strong {
+    color: #f5f5f5 !important;
+
+}
+
+/* Navbar */
+body.status-page .navbar-custom .navbar-nav li a {
+    color: #f5f5f5;
+
+}
+
+/* Statuses */
+
+body.status-page .list-group.components.components {
+    border-color: #2d2d2d;
+}
+
+body.status-page .list-group .list-group-item.group-name {
+    background-color: #2d2d2d;
+}
+
+body.status-page .list-group .list-group-item {
+    background-color: #2d2d2d;
+    color: #f5f5f5;
+}
+/* Icon for check, or ! */
+body.status-page .timeline .moment .status-icon {
+    background-color: #2d2d2d;
+    color: #f5f5f5;
+}
+
+/* Incident Timeline */
+body.status-page .timeline .moment {
+    color: #f5f5f5;
+}
+.panel-footer {
+    background-color: #2d2d2d;
+    color: #f5f5f5;
+    border-top: 1px solid #2d2d2d;
+}

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Floatplane Enhancer",
-  "version": "1.1",
+  "version": "1.2",
   "description": "Enhances the Floatplane experience",
   "permissions": ["activeTab", "storage"],
   "background": {
@@ -9,7 +9,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://floatplane.com/*", "*://www.floatplane.com/*"],
+      "matches": ["*://floatplane.com/*", "*://www.floatplane.com/*", "*://beta.floatplane.com/*", "*://status.floatplane.com/*"],
       "js": ["content.js"]
     }
   ],
@@ -18,12 +18,14 @@
   },
   "host_permissions": [
     "https://floatplane.com/",
-    "https://www.floatplane.com/"
+    "https://www.floatplane.com/",
+    "https://beta.floatplane.com/",
+    "https://status.floatplane.com/"
   ],
   "web_accessible_resources": [
     {
-      "resources": ["dark-theme.css", "timestamp.js"],
-      "matches": ["*://floatplane.com/*", "*://www.floatplane.com/*"]
+      "resources": ["/darkmode-js/dark-theme.css", "timestamp.js", "/darkmode-js/status-dark-theme.css"],
+      "matches": ["*://floatplane.com/*", "*://www.floatplane.com/*", "*://beta.floatplane.com/*", "*://status.floatplane.com/*"]
     }
   ],
   "icons": {
