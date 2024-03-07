@@ -5,6 +5,10 @@ a {
 body {
     color: #eee;
 }
+/* misc. elements */
+html, body {
+    background: #0e0e10;
+}
 
 /* Page background */
 .page-wrapper .route-wrapper {
@@ -256,6 +260,17 @@ div.post-tile-age {
 .video-content-wrapper .video-list .video-list-item + .video-list-item,
 .post-list .post-list-item + .post-list-item {
     border-top: 1px solid #333 !important;
+}
+
+/* Comment filter */
+.PostPage .comment-count .sort-by-btn {
+    color: #aaa !important;
+
+}
+
+.ContentDropdownContainer .internalContainer .dropdown-item {
+    color: #aaa !important;
+
 }
 
 /* Comments input box */
@@ -887,4 +902,8 @@ select {
 
 .modal-dialog {
     color: #fff !important;
+}
+
+.legal-page {
+    background: #111 !important;
 }
