@@ -262,9 +262,24 @@ div.post-tile-age {
     border-top: 1px solid #333 !important;
 }
 
+.PostTileThumbnail .no-thumbnail {
+    background: #222 !important;
+}
+
 /* Comment filter */
 .PostPage .comment-count .sort-by-btn {
     color: #aaa !important;
+
+}
+
+.ContentDropdownContainer .internalContainer .dropdown-item {
+    color: #aaa !important;
+    background-color: #222 !important;
+
+}
+
+.ContentDropdownContainer .internalContainer .dropdown-item:hover{
+    background-color: #333 !important;
 
 }
 
