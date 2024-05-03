@@ -203,6 +203,8 @@ div.post-tile-age {
 .ChannelStatsContainer > div .title {
     color: #fff;
 }
+
+
 /* Price */
 .ReactPlanBoxHeaderContainer .price {
     color: #aaa;
@@ -227,6 +229,35 @@ div.post-tile-age {
 /* Channel name in modal */
 .creatorMain .creatorCard .creatorVital .creatorTitle {
     color: #fff !important;
+}
+
+
+/* 04/19/2024 Beta Update */
+
+/* Subscribers */
+
+.ChannelStatsContainer>div .subs-count, .ChannelStatsContainer>div .income-value {
+    color: #fff !important;
+
+}
+
+.ChannelStatsContainer>div .title {
+    color: #fff !important;
+}
+
+/* Plan titles */
+.ReactPlanBoxHeaderContainer .title {
+    color: #fff !important;
+}
+
+/* Plan descriptions */
+
+.ReactPlanBoxHeaderContainer .price, .ReactPlanBoxHeaderContainer .subscription {
+    color: #aaa !important;
+}
+
+.ReactCreatorPlanBoxDescription p {
+    color: #aaa !important;
 }
 
 /* ------ */
@@ -327,6 +358,73 @@ div.post-tile-age {
     color: #b5b5b5;
 }
 
+/* 04/19/2024 Beta Update */
+
+/* Comment Body */
+.ReactCommentBodyComponent p {
+    color: #b5b5b5 !important;
+}
+
+/* Comment Author */
+.ReactCommentComponent .comment-header .author {
+    color: #aaa !important;
+}
+.ReactContentButton.variant-text, .ReactContentButton.variant-icon-text {
+    color: #aaa !important;
+}
+
+.ReactContentButton {
+    color: #ccc !important;
+
+}
+
+/* 04/19/2024 beta update */
+
+.ReactContentButton.variant-interaction.like svg path {
+    fill: #ccc;
+}
+
+.ReactContentButton.variant-interaction.active {
+    color: #0094c8 !important;
+    fill: #0094c8;
+}
+.ReactContentButton.variant-interaction.like.header-button.active svg path {
+    color: #0094c8 !important;
+    fill: #0094c8;
+
+}
+
+.ReactContentButton.variant-interaction.dislike.header-button.active svg path {
+    fill: #0094c8;
+}
+
+.ReactContentButton.variant-interaction.dislike.header-button svg path {
+    fill: #ccc;
+}
+
+
+.CommentReplyInput textarea, .CommentEditInput textarea {
+    background: #333 !important;
+    color: #fff !important;
+    border-bottom: 1px solid #333 !important;
+    padding: 7px !important;
+    border-radius: 5px;
+}
+
+.CommentReplyInput textarea::placeholder, .CommentEditInput textarea::placeholder {
+    color: white; 
+    text-indent: 5px;
+}
+
+.CommentReplyInputCharCount {
+    color: #aaa !important;
+}
+
+
+
+
+
+
 /* Comment actions */
 .ReactContentButton.variant-icon-text, .ReactContentButton.variant-text,
 .ReactContentButton {
@@ -383,6 +481,11 @@ div.post-tile-age {
 
 fp-quill-viewer p, fp-quill-viewer, .quill-viewer p {
     color: #b5b5b5 !important;
+}
+
+/* Update 04/19/2024 Beta */
+.DescriptionBodyComponent {
+    color: #fff !important;
 }
 
 /* Title */
@@ -640,6 +743,11 @@ a.post-tile-channel-name {
 .BrowseCreatorBox:hover {
     border: 1px solid #333 !important;
     background: #333 !important;
+}
+
+/* Background beta update */
+#page-wrapper .route-wrapper {
+    background: #0e0e10 !important;
 }
 
 /* Creator card */
