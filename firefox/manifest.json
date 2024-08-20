@@ -1,0 +1,47 @@
+{
+    "manifest_version": 2,
+    "name": "Floatplane Enhancer",
+    "version": "2.0",
+    "description": "Enhances the Floatplane experience",
+    "permissions": [
+      "activeTab",
+      "storage",
+      "*://floatplane.com/*",
+      "*://www.floatplane.com/*",
+      "*://beta.floatplane.com/*",
+      "*://status.floatplane.com/*"
+    ],
+    "background": {
+      "scripts": ["background.js"]
+    },
+    "content_scripts": [
+      {
+        "matches": [
+          "*://floatplane.com/*",
+          "*://www.floatplane.com/*",
+          "*://beta.floatplane.com/*",
+          "*://status.floatplane.com/*"
+        ],
+        "js": ["content.js"]
+      }
+    ],
+    "browser_action": {
+      "default_popup": "/gui/popup.html"
+    },
+    "web_accessible_resources": [
+      "/darkmode-css/dark-theme.css",
+      "/features/timestamp.js",
+      "/darkmode-css/status-dark-theme.css",
+      "/features/autocaption.js"
+    ],
+    "icons": {
+      "96": "icons/icon96.png",
+      "128": "icons/icon128.png"
+    },
+    "applications": {
+      "gecko": {
+        "id": "floatplaneenhancer@furrydev.xyz"
+      }
+    }
+  }
+  

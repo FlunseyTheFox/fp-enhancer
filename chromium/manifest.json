@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Floatplane Enhancer",
-  "version": "1.5",
+  "version": "2.0",
   "description": "Enhances the Floatplane experience",
   "permissions": ["activeTab", "storage"],
   "background": {
@@ -14,7 +14,7 @@
     }
   ],
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "/gui/popup.html"
   },
   "host_permissions": [
     "https://floatplane.com/",
@@ -24,7 +24,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["/darkmode-js/dark-theme.css", "timestamp.js", "/darkmode-js/status-dark-theme.css"],
+      "resources": ["/darkmode-css/dark-theme.css", "/features/timestamp.js", "/darkmode-css/status-dark-theme.css", "/features/autocaption.js"],
       "matches": ["*://floatplane.com/*", "*://www.floatplane.com/*", "*://beta.floatplane.com/*", "*://status.floatplane.com/*"]
     }
   ],

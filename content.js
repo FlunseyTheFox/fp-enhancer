@@ -1,22 +1,22 @@
 chrome.storage.sync.get(['enableDarkTheme', 'enableAutoCaption', 'enableTimestamps'], function (data) {
   const defaultValues = {
-      enableDarkTheme: true,
-      enableAutoCaption: true,
-      enableTimestamps: true,
+    enableDarkTheme: true,
+    enableAutoCaption: true,
+    enableTimestamps: true,
   };
 
   const storedData = Object.assign({}, defaultValues, data);
 
   if (storedData.enableDarkTheme) {
-      applyDarkTheme();
+    applyDarkTheme();
   }
 
   if (storedData.enableAutoCaption) {
-      selectCaptionedOption();
+    loadAutoCaptionScript();
   }
 
   if (storedData.enableTimestamps) {
-      applyTimestamps();
+    applyTimestamps();
   }
 });
 
@@ -26,29 +26,26 @@ function applyDarkTheme() {
   styleLink.rel = 'stylesheet';
   const hostname = window.location.hostname;
   if (hostname === 'status.floatplane.com') {
-      styleLink.href = chrome.runtime.getURL('/darkmode-js/status-dark-theme.css');
+    styleLink.href = chrome.runtime.getURL('/darkmode-css/status-dark-theme.css');
   } else if (hostname.includes('floatplane.com') || hostname.includes('beta.floatplane.com')) {
-      styleLink.href = chrome.runtime.getURL('/darkmode-js/dark-theme.css');
+    styleLink.href = chrome.runtime.getURL('/darkmode-css/dark-theme.css');
   }
   document.head.appendChild(styleLink);
   console.log('Dark Theme applied for:', hostname);
 }
 
-
-// Select the captioned option
-function selectCaptionedOption() {
-  const captionedElement = document.querySelector('.AttachmentComponentNeue .title[title="Captioned"]');
-  if (captionedElement) {
-      const event = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
-      captionedElement.dispatchEvent(event);
-      console.log('Captioned option selected.');
-  }
+// Function to load the auto-caption script
+function loadAutoCaptionScript() {
+  const autoCaptionScript = document.createElement('script');
+  autoCaptionScript.src = chrome.runtime.getURL('/features/autocaption.js');
+  document.head.appendChild(autoCaptionScript);
+  console.log('Auto-caption script loaded.');
 }
 
 // Apply timestamps
 function applyTimestamps() {
   const timestampScript = document.createElement('script');
-  timestampScript.src = chrome.runtime.getURL('timestamp.js');
+  timestampScript.src = chrome.runtime.getURL('/features/timestamp.js');
   document.head.appendChild(timestampScript);
   console.log('Timestamp feature applied.');
 }
@@ -57,25 +54,14 @@ function applyTimestamps() {
 chrome.storage.onChanged.addListener(function (changes) {
   // If enable darktheme is true, apply dark theme
   if (changes.enableDarkTheme && changes.enableDarkTheme.newValue) {
-      applyDarkTheme();
+    applyDarkTheme();
   }
-  // If enable auto caption is true, select captioned option
+  // If enable auto caption is true, load auto-caption script
   if (changes.enableAutoCaption && changes.enableAutoCaption.newValue) {
-      selectCaptionedOption();
+    loadAutoCaptionScript();
   }
   // If enable timestamps is true, apply timestamps JS file (timestamp.js)
   if (changes.enableTimestamps && changes.enableTimestamps.newValue) {
-      applyTimestamps();
+    applyTimestamps();
   }
 });
-
-// Check for URL change every second
-let lastUrl = window.location.href;
-setInterval(function () {
-  const currentUrl = window.location.href;
-  if (currentUrl !== lastUrl) {
-      lastUrl = currentUrl;
-      console.log('URL changed:', currentUrl);
-      selectCaptionedOption();
-  }
-}, 1000);

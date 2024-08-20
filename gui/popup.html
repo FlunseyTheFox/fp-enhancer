@@ -9,9 +9,16 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       text-align: center;
       padding: 20px;
-      background-color: #f8f8f8;
       width: 400px;
       height: 300px;
+      background-color: #f8f8f8;
+      color: #000;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    body.dark-theme {
+      background-color: #333;
+      color: #f8f8f8;
     }
 
     label {
@@ -26,6 +33,12 @@
       width: 30%;
     }
 
+    body.dark-theme label {
+      background-color: #555;
+      color: #f8f8f8;
+      border: 1px solid #777;
+    }
+
     input {
       margin-right: 8px;
     }
@@ -35,15 +48,27 @@
       color: #fff;
     }
 
+    body.dark-theme input:checked + label {
+      background-color: #5cb85c;
+    }
+
     .acknowledgments {
       margin-top: 20px;
       font-size: 14px;
       color: #777;
     }
 
+    body.dark-theme .acknowledgments {
+      color: #ccc;
+    }
+
     .acknowledgments a {
       color: #007BFF;
       text-decoration: none;
+    }
+
+    body.dark-theme .acknowledgments a {
+      color: #9cf;
     }
 
     .btn {
@@ -56,6 +81,10 @@
       border-radius: 5px;
       cursor: pointer;
       text-decoration: none;
+    }
+
+    body.dark-theme .btn {
+      background-color: #0056b3;
     }
   </style>
 </head>

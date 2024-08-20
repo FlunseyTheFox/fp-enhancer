@@ -1,0 +1,71 @@
+/* Settings */
+/* Settings - Input Boxes */
+._textWrapper_30mzn_1._theme-dark-behind_30mzn_52 {
+  color: #fff !important;
+  background-color: #000 !important;
+}
+/* button color that will blend well with background #181818 */
+._buttonMain_1r0j9_46 {
+  color: #fff !important;
+  background-color: #414141 !important;
+}
+
+/* Adding animation on active button hover (for above) */
+._buttonMain_1r0j9_46:hover {
+  background-color: #353434 !important;
+  transition: 0.3s;
+}
+
+
+/* Channel - Search - Date */
+.react-datepicker {
+    background-color: #1b1c1f !important;
+    color: #fff !important;
+}
+
+._filterBox_lhnq8_1 ._datePicker_lhnq8_66 {
+  background-color: #1b1c1f !important;
+  color: #fff !important;
+}
+.react-datepicker__header:not(.react-datepicker__header--has-time-select) {
+  background-color: #1b1c1f !important;
+  color: #fff !important;
+}
+
+.react-datepicker__current-month, .react-datepicker-time__header, .react-datepicker-year-header {
+  color: #fff !important;
+}
+
+.react-datepicker__day-name, .react-datepicker__day, .react-datepicker__time-name {
+  color: #fff !important;
+}
+
+/* Watch - Video */
+/* Watch - Video - Selector */
+._container_1klqe_1._visible_1klqe_48 ._internal_1klqe_5 {
+  background-color: #1b1c1f !important;
+  color: #fff !important;
+}
+._container_1klqe_1 ._internal_1klqe_5 .dropdown-item.selected:before {
+  background-color: #fff !important;
+}._container_1klqe_1 ._internal_1klqe_5 .dropdown-item.selected {
+  border: 3px solid #323338 !important;
+}
+button.dropdown-item {
+  background-color: #1b1c1f !important;
+  color: #fff !important;
+}
+button.dropdown-item:hover {
+  background-color: #323338 !important;
+  color: #fff !important;
+}
+
+/* Creator - Browse */
+._container_pg1bu_1:hover {
+  background-color: #2c2e33 !important;
+  color: #fff !important;
+}
+
+._container_pg1bu_1:hover img {
+  box-shadow: 0 0 10px #40424a !important;
+}
