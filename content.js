@@ -1,8 +1,9 @@
-chrome.storage.sync.get(['enableDarkTheme', 'enableAutoCaption', 'enableTimestamps'], function (data) {
+chrome.storage.sync.get(['enableDarkTheme', 'enableAutoCaption', 'enableTimestamps', 'enableBetaRedirect'], function (data) {
   const defaultValues = {
     enableDarkTheme: true,
     enableAutoCaption: true,
     enableTimestamps: true,
+    enableBetaRedirect: false
   };
 
   const storedData = Object.assign({}, defaultValues, data);
@@ -18,6 +19,9 @@ chrome.storage.sync.get(['enableDarkTheme', 'enableAutoCaption', 'enableTimestam
   if (storedData.enableTimestamps) {
     applyTimestamps();
   }
+  if (storedData.enableBetaRedirect) {
+    handleBetaRedirect();
+  }
 });
 
 // Apply dark theme
@@ -31,7 +35,6 @@ function applyDarkTheme() {
     styleLink.href = chrome.runtime.getURL('/darkmode-css/dark-theme.css');
   }
   document.head.appendChild(styleLink);
-  console.log('Dark Theme applied for:', hostname);
 }
 
 // Function to load the auto-caption script
@@ -39,7 +42,6 @@ function loadAutoCaptionScript() {
   const autoCaptionScript = document.createElement('script');
   autoCaptionScript.src = chrome.runtime.getURL('/features/autocaption.js');
   document.head.appendChild(autoCaptionScript);
-  console.log('Auto-caption script loaded.');
 }
 
 // Apply timestamps
@@ -47,8 +49,18 @@ function applyTimestamps() {
   const timestampScript = document.createElement('script');
   timestampScript.src = chrome.runtime.getURL('/features/timestamp.js');
   document.head.appendChild(timestampScript);
-  console.log('Timestamp feature applied.');
 }
+
+// Handle redirection from www (main site) to beta.floatplane.com
+// Could make this a feature in seperate file, but it's not that long...
+function handleBetaRedirect() {
+  const currentUrl = window.location.href;
+  if (currentUrl.includes('www.floatplane.com')) {
+    const newUrl = currentUrl.replace('www.floatplane.com', 'beta.floatplane.com');
+    window.location.replace(newUrl);
+  }
+}
+
 
 // Listen for changes in the storage and reapply features
 chrome.storage.onChanged.addListener(function (changes) {
@@ -63,5 +75,9 @@ chrome.storage.onChanged.addListener(function (changes) {
   // If enable timestamps is true, apply timestamps JS file (timestamp.js)
   if (changes.enableTimestamps && changes.enableTimestamps.newValue) {
     applyTimestamps();
+  }
+  // If enable beta redirect is true, apply beta redirect
+  if (changes.enableBetaRedirect && changes.enableBetaRedirect.newValue) {
+    handleBetaRedirect();
   }
 });

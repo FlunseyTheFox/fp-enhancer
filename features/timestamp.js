@@ -23,7 +23,10 @@ function handleTimestampClick(event) {
   // Function to wait for the video element to load
   const waitForVideoLoad = (callback) => {
     const checkVideoLoad = () => {
-      const video = document.querySelector('.vjs-tech');
+      const video =
+        document.querySelector('#avplayer-html5-f8b50311-729f-4444-a82c-7aa67fc397bf') ||
+        document.querySelector('._video_6vv3x_1');
+
       if (video && video.readyState >= 2) {
         callback(video);
       } else {
@@ -38,7 +41,10 @@ function handleTimestampClick(event) {
   waitForVideoLoad((video) => {
     // Convert the timestamp to seconds
     const parts = timestamp.split(':');
-    const timeInSeconds = parts.reduce((acc, val, index) => acc + parseInt(val) * Math.pow(60, parts.length - 1 - index), 0);
+    const timeInSeconds = parts.reduce(
+      (acc, val, index) => acc + parseInt(val) * Math.pow(60, parts.length - 1 - index),
+      0
+    );
 
     // Seek to the specific time in the video
     video.currentTime = timeInSeconds;
@@ -66,7 +72,6 @@ function handleMutations(mutationsList) {
 }
 
 // Use MutationObserver to listen for changes in the DOM
-// When more comments are loaded this is needed
 const observer = new MutationObserver(handleMutations);
 observer.observe(document.body, { subtree: true, childList: true });
 
@@ -88,20 +93,18 @@ document.body.addEventListener('click', (event) => {
 });
 
 // Handle video change event
-// If this was not done they it would error out when the video changes
 document.addEventListener('DOMContentLoaded', () => {
   const observer = new MutationObserver((mutationsList) => {
     mutationsList.forEach((mutation) => {
       if (mutation.type === 'attributes' && mutation.attributeName === 'src') {
-        // Dispatch a custom event to handle the video change
         const videoChangeEvent = new Event('videoChange');
         document.dispatchEvent(videoChangeEvent);
       }
     });
   });
 
-  const videoContainer = document.querySelector('.video-js');
+  const videoContainer = document.querySelector('._container_1peps_1');
   if (videoContainer) {
-    observer.observe(videoContainer, { attributes: true, attributeFilter: ['src'] });
+    observer.observe(videoContainer, { subtree: true, childList: true, attributes: true });
   }
 });

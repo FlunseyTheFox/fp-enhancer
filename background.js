@@ -9,9 +9,10 @@ chrome.runtime.onInstalled.addListener(function () {
     enableDarkTheme: true,
     enableAutoCaption: true,
     enableTimestamps: true,
+    enableBetaRedirect: false,
   };
 
-  chrome.storage.sync.get(['enableDarkTheme', 'enableAutoCaption', 'enableTimestamps'], function (data) {
+  chrome.storage.sync.get(['enableDarkTheme', 'enableAutoCaption', 'enableTimestamps', 'enableBetaRedirect'], function (data) {
     const storedData = Object.assign({}, defaultValues, data);
 
     chrome.storage.sync.set(storedData, function () {

@@ -69,3 +69,14 @@ button.dropdown-item:hover {
 ._container_pg1bu_1:hover img {
   box-shadow: 0 0 10px #40424a !important;
 }
+
+
+/* Watch - Stream - Chat Settings */
+._checkboxInput_10l4o_1 ._label_10l4o_42 {
+  color: #fff !important;
+}
+
+._chatSettingsPanel_12qi2_6 ._radioContainer_12qi2_57 {
+  color: #fff !important;
+  background-color: #1b1c1f !important;
+}

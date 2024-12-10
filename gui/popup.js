@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const enableDarkThemeCheckbox = document.getElementById('enableDarkTheme');
   const enableAutoCaptionCheckbox = document.getElementById('enableAutoCaption');
   const enableTimestampsCheckbox = document.getElementById('enableTimestamps');
+  const enableBetaRedirectCheckbox = document.getElementById('enableBetaRedirect');
 
   // Polyfill for browser compatibility (Firefox vs. Chrome)
   const isFirefox = typeof browser !== 'undefined';
@@ -26,10 +27,11 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Load user's preferences from storage and update checkbox states
-  getStorage(['enableDarkTheme', 'enableAutoCaption', 'enableTimestamps'], function (data) {
+  getStorage(['enableDarkTheme', 'enableAutoCaption', 'enableTimestamps', 'enableBetaRedirect'], function (data) {
     enableDarkThemeCheckbox.checked = data.enableDarkTheme !== undefined ? data.enableDarkTheme : false;
     enableAutoCaptionCheckbox.checked = data.enableAutoCaption !== undefined ? data.enableAutoCaption : true;
     enableTimestampsCheckbox.checked = data.enableTimestamps !== undefined ? data.enableTimestamps : true;
+    enableBetaRedirectCheckbox.checked = data.enableBetaRedirect !== undefined ? data.enableBetaRedirect : false;
 
     // Apply dark theme if enabled
     if (enableDarkThemeCheckbox.checked) {
@@ -55,5 +57,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
   enableTimestampsCheckbox.addEventListener('change', function () {
     setStorage({ enableTimestamps: enableTimestampsCheckbox.checked });
+  });
+  enableBetaRedirectCheckbox.addEventListener('change', function () {
+    if (enableBetaRedirectCheckbox.checked) {
+      if (confirm('Are you sure you want to enable beta redirect? This is an experimental feature and may cause unexpected behavior.')) {
+        setStorage({ enableBetaRedirect: enableBetaRedirectCheckbox.checked });
+      } else {
+        enableBetaRedirectCheckbox.checked = false;
+      }
+    } else {
+      setStorage({ enableBetaRedirect: enableBetaRedirectCheckbox.checked });
+    }
   });
 });
