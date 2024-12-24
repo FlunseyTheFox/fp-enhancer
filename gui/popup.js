@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const enableAutoCaptionCheckbox = document.getElementById('enableAutoCaption');
   const enableTimestampsCheckbox = document.getElementById('enableTimestamps');
   const enableBetaRedirectCheckbox = document.getElementById('enableBetaRedirect');
+  const enableCheckIfCreatorLiveCheckbox = document.getElementById('enableCheckIfCreatorLive');
 
   // Polyfill for browser compatibility (Firefox vs. Chrome)
   const isFirefox = typeof browser !== 'undefined';
@@ -27,11 +28,12 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Load user's preferences from storage and update checkbox states
-  getStorage(['enableDarkTheme', 'enableAutoCaption', 'enableTimestamps', 'enableBetaRedirect'], function (data) {
+  getStorage(['enableDarkTheme', 'enableAutoCaption', 'enableTimestamps', 'enableBetaRedirect', 'enableCheckIfCreatorLive'], function (data) {
     enableDarkThemeCheckbox.checked = data.enableDarkTheme !== undefined ? data.enableDarkTheme : false;
     enableAutoCaptionCheckbox.checked = data.enableAutoCaption !== undefined ? data.enableAutoCaption : true;
     enableTimestampsCheckbox.checked = data.enableTimestamps !== undefined ? data.enableTimestamps : true;
     enableBetaRedirectCheckbox.checked = data.enableBetaRedirect !== undefined ? data.enableBetaRedirect : false;
+    enableCheckIfCreatorLiveCheckbox.checked = data.enableCheckIfCreatorLive !== undefined ? data.enableCheckIfCreatorLive : true;
 
     // Apply dark theme if enabled
     if (enableDarkThemeCheckbox.checked) {
@@ -68,5 +70,8 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
       setStorage({ enableBetaRedirect: enableBetaRedirectCheckbox.checked });
     }
+  });
+  enableCheckIfCreatorLiveCheckbox.addEventListener('change', function () {
+    setStorage({ enableCheckIfCreatorLive: enableCheckIfCreatorLiveCheckbox.checked });
   });
 });

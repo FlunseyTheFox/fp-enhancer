@@ -76,7 +76,19 @@ button.dropdown-item:hover {
   color: #fff !important;
 }
 
+
 ._chatSettingsPanel_12qi2_6 ._radioContainer_12qi2_57 {
   color: #fff !important;
   background-color: #1b1c1f !important;
+}
+
+/* Watch - URLs in comments/descriptions */
+body ._text_1ex24_73._visible_1ex24_90 * a {
+  color: #00cddc !important;
+}
+
+/* Watch - Live - Chat Links */
+
+._chatMessage_kbx2m_7 ._chatText_kbx2m_47 span a {
+  color: #00cddc !important;
 }

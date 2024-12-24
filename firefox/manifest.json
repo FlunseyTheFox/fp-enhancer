@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Floatplane Enhancer",
-    "version": "2.1",
+    "version": "2.2",
     "description": "Enhances the Floatplane experience",
     "permissions": [
       "activeTab",
@@ -9,7 +9,8 @@
       "*://floatplane.com/*",
       "*://www.floatplane.com/*",
       "*://beta.floatplane.com/*",
-      "*://status.floatplane.com/*"
+      "*://status.floatplane.com/*",
+      "*://*.live-video.net/*"
     ],
     "background": {
       "scripts": ["background.js"]
@@ -20,7 +21,8 @@
           "*://floatplane.com/*",
           "*://www.floatplane.com/*",
           "*://beta.floatplane.com/*",
-          "*://status.floatplane.com/*"
+          "*://status.floatplane.com/*",
+          "*://*.live-video.net/*"
         ],
         "js": ["content.js"]
       }

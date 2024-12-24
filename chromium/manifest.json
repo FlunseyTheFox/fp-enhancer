@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Floatplane Enhancer",
-  "version": "2.1",
+  "version": "2.2",
   "description": "Enhances the Floatplane experience",
   "permissions": ["activeTab", "storage"],
   "background": {
@@ -20,11 +20,12 @@
     "https://floatplane.com/",
     "https://www.floatplane.com/",
     "https://beta.floatplane.com/",
-    "https://status.floatplane.com/"
+    "https://status.floatplane.com/",
+    "https://*.live-video.net/*"
   ],
   "web_accessible_resources": [
     {
-      "resources": ["/darkmode-css/dark-theme.css", "/features/timestamp.js", "/darkmode-css/status-dark-theme.css", "/features/autocaption.js"],
+      "resources": ["/darkmode-css/dark-theme.css", "/features/timestamp.js", "/darkmode-css/status-dark-theme.css", "/features/autocaption.js", "/features/is_live_watcher.js"],
       "matches": ["*://floatplane.com/*", "*://www.floatplane.com/*", "*://beta.floatplane.com/*", "*://status.floatplane.com/*"]
     }
   ],

@@ -1,9 +1,10 @@
-chrome.storage.sync.get(['enableDarkTheme', 'enableAutoCaption', 'enableTimestamps', 'enableBetaRedirect'], function (data) {
+chrome.storage.sync.get(['enableDarkTheme', 'enableAutoCaption', 'enableTimestamps', 'enableBetaRedirect', 'enableCheckIfCreatorLive'], function (data) {
   const defaultValues = {
     enableDarkTheme: true,
     enableAutoCaption: true,
     enableTimestamps: true,
-    enableBetaRedirect: false
+    enableBetaRedirect: false,
+    enableCheckIfCreatorLive: true
   };
 
   const storedData = Object.assign({}, defaultValues, data);
@@ -22,6 +23,9 @@ chrome.storage.sync.get(['enableDarkTheme', 'enableAutoCaption', 'enableTimestam
   if (storedData.enableBetaRedirect) {
     handleBetaRedirect();
   }
+  if (storedData.enableCheckIfCreatorLive) {
+    better_live_watcher();
+  }
 });
 
 // Apply dark theme
@@ -36,6 +40,7 @@ function applyDarkTheme() {
   }
   document.head.appendChild(styleLink);
 }
+
 
 // Function to load the auto-caption script
 function loadAutoCaptionScript() {
@@ -61,6 +66,61 @@ function handleBetaRedirect() {
   }
 }
 
+// Do check if creator is live feature
+function better_live_watcher() {
+  const is_live_watcher = document.createElement('script');
+  is_live_watcher.src = chrome.runtime.getURL('/features/is_live_watcher.js');
+  document.head.appendChild(is_live_watcher);
+}
+
+
+// This is for forwarding the live URL to the background script for checking live status
+// This is necessary because content scripts cannot make cross-origin requests because of CORS policy restrictions
+// or else this would have saved me a lot of time and effort :(
+// This also lets me change the button color as Floatplane does not give a class or ID to the LIVE button so it is handled directly under this script
+window.addEventListener("message", function (event) {
+  if (event.data && event.data.type === "checkLiveStatus") {
+    const liveUrl = event.data.url;
+    const cdn = event.data.cdn;
+    const uri = event.data.uri;
+
+
+    chrome.runtime.sendMessage(
+      { action: 'checkLiveStatus', url: liveUrl, cdn: cdn, uri: uri },
+      (response) => {
+        if (chrome.runtime.lastError) {
+          console.error("Floatplane Enhancer: Error sending message to background script:", chrome.runtime.lastError);
+          return;
+        }
+
+        if (response && response.live !== undefined) {
+          updateLiveButton(response.live);
+        } else {
+          console.error("Floatplane Enhancer: No response or invalid response from background script.");
+        }
+      }
+    );
+  }
+});
+
+// Update the LIVE button (used in is_live_watcher.js)
+function updateLiveButton(isLive) {
+  const liveButton = document.querySelector('a[href*="live"]');
+  
+  if (liveButton) {
+    if (isLive) {
+      liveButton.style.color = 'red';
+      liveButton.style.fontWeight = 'bold';
+    } else {
+      liveButton.style.color = '';
+      liveButton.style.fontWeight = '';
+    }
+  } else {
+    console.error("Floatplane Enhancer: LIVE button not found.");
+  }
+}
+
+
 
 // Listen for changes in the storage and reapply features
 chrome.storage.onChanged.addListener(function (changes) {
@@ -79,5 +139,8 @@ chrome.storage.onChanged.addListener(function (changes) {
   // If enable beta redirect is true, apply beta redirect
   if (changes.enableBetaRedirect && changes.enableBetaRedirect.newValue) {
     handleBetaRedirect();
+  }
+  if (changes.enableCheckIfCreatorLive && changes.enableCheckIfCreatorLive.newValue) {
+    better_live_watcher();
   }
 });
