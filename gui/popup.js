@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
   const enableDarkThemeCheckbox = document.getElementById('enableDarkTheme');
+  const enableDarkModeFixLinksCheckbox = document.getElementById('enableDarkModeFixLinks');
   const enableAutoCaptionCheckbox = document.getElementById('enableAutoCaption');
   const enableTimestampsCheckbox = document.getElementById('enableTimestamps');
   const enableBetaRedirectCheckbox = document.getElementById('enableBetaRedirect');
@@ -28,8 +29,9 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Load user's preferences from storage and update checkbox states
-  getStorage(['enableDarkTheme', 'enableAutoCaption', 'enableTimestamps', 'enableBetaRedirect', 'enableCheckIfCreatorLive'], function (data) {
+  getStorage(['enableDarkTheme', 'enableDarkModeFixLinks', 'enableAutoCaption', 'enableTimestamps', 'enableBetaRedirect', 'enableCheckIfCreatorLive'], function (data) {
     enableDarkThemeCheckbox.checked = data.enableDarkTheme !== undefined ? data.enableDarkTheme : false;
+    enableDarkModeFixLinksCheckbox.checked = data.enableDarkModeFixLinks !== undefined ? data.enableDarkModeFixLinks : false;
     enableAutoCaptionCheckbox.checked = data.enableAutoCaption !== undefined ? data.enableAutoCaption : true;
     enableTimestampsCheckbox.checked = data.enableTimestamps !== undefined ? data.enableTimestamps : true;
     enableBetaRedirectCheckbox.checked = data.enableBetaRedirect !== undefined ? data.enableBetaRedirect : false;
@@ -50,6 +52,18 @@ document.addEventListener('DOMContentLoaded', function () {
       document.body.classList.add('dark-theme');
     } else {
       document.body.classList.remove('dark-theme');
+    }
+  });
+
+  enableDarkModeFixLinksCheckbox.addEventListener('change', function () {
+    if (enableDarkModeFixLinksCheckbox.checked) {
+      if (confirm('Are you sure you want to enable dark mode fix links? This is an experimental feature and may cause unexpected behavior.')) {
+        setStorage({ enableDarkModeFixLinks: enableDarkModeFixLinksCheckbox.checked });
+      } else {
+        enableDarkModeFixLinksCheckbox.checked = false;
+      }
+    } else {
+      setStorage({ enableDarkModeFixLinks: enableDarkModeFixLinksCheckbox.checked });
     }
   });
 

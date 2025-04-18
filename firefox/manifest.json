@@ -34,7 +34,8 @@
       "/darkmode-css/dark-theme.css",
       "/features/timestamp.js",
       "/darkmode-css/status-dark-theme.css",
-      "/features/autocaption.js"
+      "/features/autocaption.js",
+      "/features/darkmode_fix_links.js"
     ],
     "icons": {
       "96": "icons/icon96.png",

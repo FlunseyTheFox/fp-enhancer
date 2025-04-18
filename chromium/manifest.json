@@ -25,7 +25,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["/darkmode-css/dark-theme.css", "/features/timestamp.js", "/darkmode-css/status-dark-theme.css", "/features/autocaption.js", "/features/is_live_watcher.js"],
+      "resources": ["/darkmode-css/dark-theme.css", "/features/timestamp.js", "/darkmode-css/status-dark-theme.css", "/features/autocaption.js", "/features/is_live_watcher.js", "/features/darkmode_fix_links.js"],
       "matches": ["*://floatplane.com/*", "*://www.floatplane.com/*", "*://beta.floatplane.com/*", "*://status.floatplane.com/*"]
     }
   ],
