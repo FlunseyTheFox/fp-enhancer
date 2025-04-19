@@ -1,6 +1,7 @@
-chrome.storage.sync.get(['enableDarkTheme', 'enableAutoCaption', 'enableTimestamps', 'enableBetaRedirect', 'enableCheckIfCreatorLive'], function (data) {
+chrome.storage.sync.get(['enableDarkTheme', 'enableDarkModeFixLinks', 'enableAutoCaption', 'enableTimestamps', 'enableBetaRedirect', 'enableCheckIfCreatorLive'], function (data) {
   const defaultValues = {
     enableDarkTheme: true,
+    enableDarkModeFixLinks: true,
     enableAutoCaption: true,
     enableTimestamps: true,
     enableBetaRedirect: false,
@@ -11,6 +12,10 @@ chrome.storage.sync.get(['enableDarkTheme', 'enableAutoCaption', 'enableTimestam
 
   if (storedData.enableDarkTheme) {
     applyDarkTheme();
+  }
+
+  if (storedData.enableDarkModeFixLinks) {
+    loadDarkmodeFixLinks();
   }
 
   if (storedData.enableAutoCaption) {
@@ -47,6 +52,12 @@ function loadAutoCaptionScript() {
   const autoCaptionScript = document.createElement('script');
   autoCaptionScript.src = chrome.runtime.getURL('/features/autocaption.js');
   document.head.appendChild(autoCaptionScript);
+}
+
+function loadDarkmodeFixLinks() {
+  const darkmodeFixLinksScript = document.createElement('script');
+  darkmodeFixLinksScript.src = chrome.runtime.getURL('/features/darkmode_fix_links.js');
+  document.head.appendChild(darkmodeFixLinksScript);
 }
 
 // Apply timestamps
@@ -128,6 +139,13 @@ chrome.storage.onChanged.addListener(function (changes) {
   if (changes.enableDarkTheme && changes.enableDarkTheme.newValue) {
     applyDarkTheme();
   }
+
+  // If enable darktheme fix links is true, load darkmode enhancer detection script
+  // if this does not work blame linus
+  if (changes.enableDarkModeFixLinks && changes.enableDarkModeFixLinks.newValue) {
+    loadDarkmodeFixLinks();
+  }
+
   // If enable auto caption is true, load auto-caption script
   if (changes.enableAutoCaption && changes.enableAutoCaption.newValue) {
     loadAutoCaptionScript();

@@ -1,6 +1,6 @@
 /* Settings */
 /* Settings - Input Boxes */
-._textWrapper_30mzn_1._theme-dark-behind_30mzn_52 {
+._textWrapper_wnxye_1._theme-dark-behind_wnxye_52 {
   color: #fff !important;
   background-color: #000 !important;
 }
@@ -82,13 +82,8 @@ button.dropdown-item:hover {
   background-color: #1b1c1f !important;
 }
 
-/* Watch - URLs in comments/descriptions */
-body ._text_1ex24_73._visible_1ex24_90 * a {
-  color: #00cddc !important;
-}
-
 /* Watch - Live - Chat Links */
 
-._chatMessage_kbx2m_7 ._chatText_kbx2m_47 span a {
+._chatMessage_sn1c6_7 ._chatText_sn1c6_51 span a {
   color: #00cddc !important;
 }
