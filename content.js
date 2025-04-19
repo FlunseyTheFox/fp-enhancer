@@ -1,7 +1,7 @@
 chrome.storage.sync.get(['enableDarkTheme', 'enableDarkModeFixLinks', 'enableAutoCaption', 'enableTimestamps', 'enableBetaRedirect', 'enableCheckIfCreatorLive'], function (data) {
   const defaultValues = {
     enableDarkTheme: true,
-    enableDarkModeFixLinks: false,
+    enableDarkModeFixLinks: true,
     enableAutoCaption: true,
     enableTimestamps: true,
     enableBetaRedirect: false,
@@ -55,9 +55,9 @@ function loadAutoCaptionScript() {
 }
 
 function loadDarkmodeFixLinks() {
-  const darkmodeFixLinks = document.createElement('script');
-  darkmodeFixLinks.src = chrome.runtime.getURL('/features/darkmode_fix_links.js');
-  document.head.appendChild(darkmodeFixLinks);
+  const darkmodeFixLinksScript = document.createElement('script');
+  darkmodeFixLinksScript.src = chrome.runtime.getURL('/features/darkmode_fix_links.js');
+  document.head.appendChild(darkmodeFixLinksScript);
 }
 
 // Apply timestamps

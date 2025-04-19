@@ -62,10 +62,8 @@ function handleMutations(mutationsList) {
   });
 }
 
-
-const observer = new MutationObserver(handleMutations);
-observer.observe(document.body, { subtree: true, childList: true });
-
+const timestampObserver = new MutationObserver(handleMutations);
+timestampObserver.observe(document.body, { subtree: true, childList: true });
 
 document.addEventListener('DOMContentLoaded', () => {
   const existingComments = document.querySelectorAll('.text-selectable p');
@@ -84,7 +82,7 @@ document.body.addEventListener('click', (event) => {
 
 // Handle video change event
 document.addEventListener('DOMContentLoaded', () => {
-  const observer = new MutationObserver((mutationsList) => {
+  const timestampObserver = new MutationObserver((mutationsList) => {
     mutationsList.forEach((mutation) => {
       if (mutation.type === 'attributes' && mutation.attributeName === 'src') {
         const videoChangeEvent = new Event('videoChange');
@@ -95,6 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const videoContainer = document.querySelector('._container_1peps_1');
   if (videoContainer) {
-    observer.observe(videoContainer, { subtree: true, childList: true, attributes: true });
+    timestampObserver.observe(videoContainer, { subtree: true, childList: true, attributes: true });
   }
 });
