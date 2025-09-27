@@ -5,21 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Floatplane Enhancer Settings</title>
   <style>
+    :root {
+      --bg-color: #f9fafb;
+      --text-color: #1f2937;
+      --container-bg: #fff;
+      --border-color: #e5e7eb;
+      --shadow-color: rgba(0, 0, 0, 0.1);
+      --tooltip-text: #fff;
+      --tooltip-bg: #111827;
+      --link-color: #3b82f6;
+      --btn-bg: #3b82f6;
+      --btn-hover-bg: #1d4ed8;
+      --icon-color: #6b7280;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 15px;
       width: 370px;
-      min-height: 400px;
-      background-color: #f9fafb;
-      color: #1f2937;
+      background-color: var(--bg-color);
+      color: var(--text-color);
       transition: background-color 0.3s ease, color 0.3s ease;
       font-size: 14px;
+      position: relative;
+      overflow: hidden;
+      min-height: 300px;
     }
 
     body.dark-theme {
-      background-color: #1f2937;
-      color: #e5e7eb;
+      --bg-color: #1f2937;
+      --text-color: #e5e7eb;
+      --container-bg: #374151;
+      --border-color: #4b5563;
+      --shadow-color: rgba(0, 0, 0, 0.3);
+      --link-color: #60a5fa;
+      --btn-bg: #2563eb;
+      --btn-hover-bg: #1e40af;
+      --icon-color: #9ca3af;
     }
 
     h1 {
@@ -29,70 +52,68 @@
     }
 
     .settings-container {
-      max-height: 250px;
-      overflow-y: auto;
       padding: 10px;
-      background-color: #fff;
+      background-color: var(--container-bg);
       border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    body.dark-theme .settings-container {
-      background-color: #374151;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 2px 4px var(--shadow-color);
     }
 
     .setting {
       display: flex;
       align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid #e5e7eb;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-color);
     }
+    .setting:last-child { border-bottom: none; }
 
-    body.dark-theme .setting {
-      border-bottom: 1px solid #4b5563;
+    .setting input[type="checkbox"] { margin-right: 10px; }
+    .setting label { flex-grow: 1; text-align: left; cursor: pointer; }
+    .setting .icon-button {
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 5px;
+        color: var(--icon-color);
     }
+    .setting .icon-button:hover { color: var(--text-color); }
 
-    .setting:last-child {
-      border-bottom: none;
+    .flyout-panel {
+        position: absolute;
+        top: 0;
+        right: -100%;
+        width: 100%;
+        height: 100%;
+        background-color: var(--bg-color);
+        box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+        transition: right 0.3s ease-in-out;
+        z-index: 10;
+        padding: 15px;
+        box-sizing: border-box;
     }
-
-    .setting input {
-      margin-right: 10px;
+    .flyout-panel.visible { right: 0; }
+    .flyout-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
     }
-
-    .setting label {
-      flex-grow: 1;
-      text-align: left;
-      cursor: pointer;
-      position: relative;
+    .flyout-header .back-button {
+        margin-right: 10px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--text-color);
     }
-
-    .setting .tooltip {
-      position: relative;
-      display: inline-block;
-      margin-left: 5px;
-      cursor: help;
-      color: #6b7280;
+    .flyout-header h2 {
+        font-size: 16px;
+        margin: 0;
     }
-
-    body.dark-theme .setting .tooltip {
-      color: #9ca3af;
+    .radio-setting {
+        display: block;
+        margin-bottom: 10px;
     }
-
-    .setting .tooltip:hover::after {
-      content: attr(data-tooltip);
-      position: absolute;
-      top: 100%;
-      left: 0;
-      z-index: 10;
-      background-color: #111827;
-      color: #fff;
-      padding: 8px;
-      border-radius: 4px;
-      font-size: 12px;
-      width: 200px;
-      white-space: normal;
+    .radio-setting label {
+        cursor: pointer;
     }
 
     .acknowledgments {
@@ -101,19 +122,8 @@
       color: #6b7280;
       text-align: center;
     }
-
-    body.dark-theme .acknowledgments {
-      color: #9ca3af;
-    }
-
-    .acknowledgments a {
-      color: #3b82f6;
-      text-decoration: none;
-    }
-
-    body.dark-theme .acknowledgments a {
-      color: #60a5fa;
-    }
+    body.dark-theme .acknowledgments { color: #9ca3af; }
+    .acknowledgments a { color: var(--link-color); text-decoration: none; }
 
     .buttons {
       display: flex;
@@ -121,9 +131,8 @@
       gap: 10px;
       flex-wrap: wrap;
     }
-
     .btn {
-      background-color: #3b82f6;
+      background-color: var(--btn-bg);
       color: #fff;
       border: none;
       padding: 8px 16px;
@@ -133,18 +142,7 @@
       font-size: 13px;
       transition: background-color 0.3s ease;
     }
-
-    body.dark-theme .btn {
-      background-color: #2563eb;
-    }
-
-    .btn:hover {
-      background-color: #1d4ed8;
-    }
-
-    body.dark-theme .btn:hover {
-      background-color: #1e40af;
-    }
+    .btn:hover { background-color: var(--btn-hover-bg); }
   </style>
 </head>
 <body>
@@ -152,41 +150,24 @@
   <div class="settings-container">
     <div class="setting">
       <input type="checkbox" id="enableDarkTheme">
-      <label for="enableDarkTheme">Dark Theme
-        <span class="tooltip" data-tooltip="Enables a dark theme for the Floatplane interface."></span>
-      </label>
+      <label for="enableDarkTheme">Dark Theme</label>
     </div>
     <div class="setting">
       <input type="checkbox" id="enableDarkModeFixLinks">
-      <label for="enableDarkModeFixLinks">Dark Mode (Dynamic)
-        <br>
-        <small>(Tries to dynamiclly detect the elements instead of using hard-coded CSS file, disable if causing issues)</small>
-        <span class="tooltip" data-tooltip="Adjusts link colors to be more readable in dark mode."></span>
-      </label>
-    </div>
-    <div class="setting">
-      <input type="checkbox" id="enableAutoCaption">
-      <label for="enableAutoCaption">Auto Caption
-        <span class="tooltip" data-tooltip="Automatically enables captions on videos when available."></span>
-      </label>
-    </div>
-    <div class="setting">
-      <input type="checkbox" id="enableTimestamps">
-      <label for="enableTimestamps">Timestamps
-        <span class="tooltip" data-tooltip="Displays timestamps for video comments or sections."></span>
-      </label>
+      <label for="enableDarkModeFixLinks">Dark Mode (Dynamic)</label>
     </div>
     <div class="setting">
       <input type="checkbox" id="enableBetaRedirect">
-      <label for="enableBetaRedirect">Beta Redirect
-        <span class="tooltip" data-tooltip="Redirects to the beta version of Floatplane when applicable."></span>
-      </label>
+      <label for="enableBetaRedirect">Beta Redirect</label>
     </div>
     <div class="setting">
       <input type="checkbox" id="enableCheckIfCreatorLive">
-      <label for="enableCheckIfCreatorLive">Show if Creator is Live
-        <span class="tooltip" data-tooltip="Displays a notification when a creator is streaming live."></span>
-      </label>
+      <label for="enableCheckIfCreatorLive">Show if Creator is Live</label>
+    </div>
+     <div class="setting">
+      <input type="checkbox" id="enableVODPolls">
+      <label for="enableVODPolls">Show VOD Poll Data</label>
+      <button id="vodPollsSettingsBtn" class="icon-button" aria-label="Poll Settings">⚙️</button>
     </div>
   </div>
   <div class="acknowledgments">
@@ -197,6 +178,27 @@
     <a href="https://x.com/flunseydevelops" class="btn" target="_blank">Updates</a>
     <a href="https://github.com/FlunseyTheFox/fp-enhancer" class="btn" target="_blank">Contribute</a>
   </div>
+
+  <div id="vodPollsFlyout" class="flyout-panel">
+    <div class="flyout-header">
+        <button id="backFromPolls" class="back-button" aria-label="Back to main settings">&larr;</button>
+        <h2>VOD Poll Settings</h2>
+    </div>
+    <div class="radio-setting">
+        <label>
+            <input type="radio" name="pollDisplayMode" value="final" checked>
+            Show final results only
+        </label>
+    </div>
+    <div class="radio-setting">
+        <label>
+            <input type="radio" name="pollDisplayMode" value="realtime">
+            Re-create poll in real-time
+        </label>
+    </div>
+  </div>
+
   <script src="popup.js"></script>
 </body>
 </html>
+

@@ -1,91 +1,75 @@
 document.addEventListener('DOMContentLoaded', function () {
-  const enableDarkThemeCheckbox = document.getElementById('enableDarkTheme');
-  const enableDarkModeFixLinksCheckbox = document.getElementById('enableDarkModeFixLinks');
-  const enableAutoCaptionCheckbox = document.getElementById('enableAutoCaption');
-  const enableTimestampsCheckbox = document.getElementById('enableTimestamps');
-  const enableBetaRedirectCheckbox = document.getElementById('enableBetaRedirect');
-  const enableCheckIfCreatorLiveCheckbox = document.getElementById('enableCheckIfCreatorLive');
+    const checkboxes = {
+        enableDarkTheme: document.getElementById('enableDarkTheme'),
+        enableDarkModeFixLinks: document.getElementById('enableDarkModeFixLinks'),
+        enableBetaRedirect: document.getElementById('enableBetaRedirect'),
+        enableCheckIfCreatorLive: document.getElementById('enableCheckIfCreatorLive'),
+        enableVODPolls: document.getElementById('enableVODPolls')
+    };
+    const vodPollsSettingsBtn = document.getElementById('vodPollsSettingsBtn');
+    const vodPollsFlyout = document.getElementById('vodPollsFlyout');
+    const backFromPollsBtn = document.getElementById('backFromPolls');
+    const pollDisplayModeRadios = document.querySelectorAll('input[name="pollDisplayMode"]');
 
-  // Polyfill for browser compatibility (Firefox vs. Chrome)
-  const isFirefox = typeof browser !== 'undefined';
-  const storage = isFirefox ? browser.storage.sync : chrome.storage.sync;
+    const storage = chrome.storage.sync;
 
-  // Function to get storage values with promise or callback handling
-  function getStorage(keys, callback) {
-    if (isFirefox) {
-      storage.get(keys).then(callback, console.error);
-    } else {
-      storage.get(keys, callback);
-    }
-  }
+    const settingsToLoad = [...Object.keys(checkboxes), 'pollDisplayMode'];
 
-  // Function to set storage values with promise or callback handling
-  function setStorage(data) {
-    if (isFirefox) {
-      storage.set(data).catch(console.error);
-    } else {
-      storage.set(data);
-    }
-  }
+    // Load preferences and update UI
+    storage.get(settingsToLoad, function (data) {
+        Object.keys(checkboxes).forEach(key => {
+            if (checkboxes[key]) {
+                checkboxes[key].checked = data[key] !== undefined ? data[key] : false;
+            }
+        });
+        
+        // Special defaults for certain features
+        if (data.enableDarkTheme === undefined) checkboxes.enableDarkTheme.checked = true;
+        if (data.enableCheckIfCreatorLive === undefined) checkboxes.enableCheckIfCreatorLive.checked = true;
+        if (data.enableVODPolls === undefined) checkboxes.enableVODPolls.checked = true;
 
-  // Load user's preferences from storage and update checkbox states
-  getStorage(['enableDarkTheme', 'enableDarkModeFixLinks', 'enableAutoCaption', 'enableTimestamps', 'enableBetaRedirect', 'enableCheckIfCreatorLive'], function (data) {
-    enableDarkThemeCheckbox.checked = data.enableDarkTheme !== undefined ? data.enableDarkTheme : false;
-    enableDarkModeFixLinksCheckbox.checked = data.enableDarkModeFixLinks !== undefined ? data.enableDarkModeFixLinks : false;
-    enableAutoCaptionCheckbox.checked = data.enableAutoCaption !== undefined ? data.enableAutoCaption : true;
-    enableTimestampsCheckbox.checked = data.enableTimestamps !== undefined ? data.enableTimestamps : true;
-    enableBetaRedirectCheckbox.checked = data.enableBetaRedirect !== undefined ? data.enableBetaRedirect : false;
-    enableCheckIfCreatorLiveCheckbox.checked = data.enableCheckIfCreatorLive !== undefined ? data.enableCheckIfCreatorLive : true;
+        if (checkboxes.enableDarkTheme.checked) {
+            document.body.classList.add('dark-theme');
+        }
 
-    // Apply dark theme if enabled
-    if (enableDarkThemeCheckbox.checked) {
-      document.body.classList.add('dark-theme');
-    }
-  });
+        const pollMode = data.pollDisplayMode || 'final';
+        document.querySelector(`input[name="pollDisplayMode"][value="${pollMode}"]`).checked = true;
+    });
 
-  // Listen for checkbox changes and update storage
-  enableDarkThemeCheckbox.addEventListener('change', function () {
-    setStorage({ enableDarkTheme: enableDarkThemeCheckbox.checked });
+    // Add event listeners for checkboxes
+    Object.keys(checkboxes).forEach(key => {
+        if (checkboxes[key]) {
+            checkboxes[key].addEventListener('change', function (e) {
+                if (key === 'enableDarkModeFixLinks' || key === 'enableBetaRedirect') {
+                    if (e.target.checked && !confirm('This is an experimental feature and may cause unexpected behavior. Are you sure?')) {
+                        e.target.checked = false;
+                        return;
+                    }
+                }
+                storage.set({ [key]: e.target.checked });
 
-    // Apply or remove dark theme based on checkbox state
-    if (enableDarkThemeCheckbox.checked) {
-      document.body.classList.add('dark-theme');
-    } else {
-      document.body.classList.remove('dark-theme');
-    }
-  });
+                if (key === 'enableDarkTheme') {
+                     document.body.classList.toggle('dark-theme', e.target.checked);
+                }
+            });
+        }
+    });
 
-  enableDarkModeFixLinksCheckbox.addEventListener('change', function () {
-    if (enableDarkModeFixLinksCheckbox.checked) {
-      if (confirm('Are you sure you want to enable dark mode fix links? This is an experimental feature and may cause unexpected behavior.')) {
-        setStorage({ enableDarkModeFixLinks: enableDarkModeFixLinksCheckbox.checked });
-      } else {
-        enableDarkModeFixLinksCheckbox.checked = false;
-      }
-    } else {
-      setStorage({ enableDarkModeFixLinks: enableDarkModeFixLinksCheckbox.checked });
-    }
-  });
+    // Add event listeners for radio buttons
+    pollDisplayModeRadios.forEach(radio => {
+        radio.addEventListener('change', function (e) {
+            if (e.target.checked) {
+                storage.set({ pollDisplayMode: e.target.value });
+            }
+        });
+    });
 
-  enableAutoCaptionCheckbox.addEventListener('change', function () {
-    setStorage({ enableAutoCaption: enableAutoCaptionCheckbox.checked });
-  });
+    // Flyout panel logic
+    vodPollsSettingsBtn.addEventListener('click', () => {
+        vodPollsFlyout.classList.add('visible');
+    });
 
-  enableTimestampsCheckbox.addEventListener('change', function () {
-    setStorage({ enableTimestamps: enableTimestampsCheckbox.checked });
-  });
-  enableBetaRedirectCheckbox.addEventListener('change', function () {
-    if (enableBetaRedirectCheckbox.checked) {
-      if (confirm('Are you sure you want to enable beta redirect? This is an experimental feature and may cause unexpected behavior.')) {
-        setStorage({ enableBetaRedirect: enableBetaRedirectCheckbox.checked });
-      } else {
-        enableBetaRedirectCheckbox.checked = false;
-      }
-    } else {
-      setStorage({ enableBetaRedirect: enableBetaRedirectCheckbox.checked });
-    }
-  });
-  enableCheckIfCreatorLiveCheckbox.addEventListener('change', function () {
-    setStorage({ enableCheckIfCreatorLive: enableCheckIfCreatorLiveCheckbox.checked });
-  });
+    backFromPollsBtn.addEventListener('click', () => {
+        vodPollsFlyout.classList.remove('visible');
+    });
 });
