@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Floatplane Enhancer",
-    "version": "2.3",
+    "version": "2.4",
     "description": "Enhances the Floatplane experience",
     "permissions": [
       "activeTab",
@@ -10,7 +10,8 @@
       "*://www.floatplane.com/*",
       "*://beta.floatplane.com/*",
       "*://status.floatplane.com/*",
-      "*://*.live-video.net/*"
+      "*://*.live-video.net/*",
+      "*://api.pollsplane.com/*"
     ],
     "background": {
       "scripts": ["background.js"]
@@ -32,9 +33,11 @@
     },
     "web_accessible_resources": [
       "/darkmode-css/dark-theme.css",
-      "/features/timestamp.js",
       "/darkmode-css/status-dark-theme.css",
+      "/features/timestamp.js",
       "/features/autocaption.js",
+      "/features/is_live_watcher.js",
+      "/features/live_polls.js",
       "/features/darkmode_fix_links.js"
     ],
     "icons": {
@@ -46,5 +49,4 @@
         "id": "floatplaneenhancer@furrydev.xyz"
       }
     }
-  }
-  
+}

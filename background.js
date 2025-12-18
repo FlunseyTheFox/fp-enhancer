@@ -17,14 +17,14 @@
 chrome.runtime.onInstalled.addListener(function () {
   const defaultValues = {
     enableDarkTheme: true,
-    enableDarkModeFixLinks: true,
-    enableAutoCaption: true,
-    enableTimestamps: true,
+    enableDarkModeFixLinks: false,
     enableBetaRedirect: false,
-    enableCheckIfCreatorLive: true
+    enableCheckIfCreatorLive: true,
+    enableVODPolls: true,
+    pollDisplayMode: 'final'
   };
 
-  chrome.storage.sync.get(['enableDarkTheme', 'enableDarkModeFixLinks', 'enableAutoCaption', 'enableTimestamps', 'enableBetaRedirect', 'enableCheckIfCreatorLive'], function (data) {
+  chrome.storage.sync.get(Object.keys(defaultValues), function (data) {
     const storedData = Object.assign({}, defaultValues, data);
 
     chrome.storage.sync.set(storedData, function () {
@@ -33,9 +33,7 @@ chrome.runtime.onInstalled.addListener(function () {
   });
 });
 
-
 // Proxy-like background script to check if a creator is live
-// This gets passed into the file content.js which then sends the live URL to the script
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'checkLiveStatus') {
     const liveUrl = message.url;
@@ -78,15 +76,3 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-

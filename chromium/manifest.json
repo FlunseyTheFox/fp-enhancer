@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Floatplane Enhancer",
-  "version": "2.3",
+  "version": "2.4",
   "description": "Enhances the Floatplane experience",
   "permissions": ["activeTab", "storage"],
   "background": {
@@ -21,12 +21,25 @@
     "https://www.floatplane.com/",
     "https://beta.floatplane.com/",
     "https://status.floatplane.com/",
-    "https://*.live-video.net/*"
+    "https://*.live-video.net/*",
+    "https://api.pollsplane.com/*"
   ],
   "web_accessible_resources": [
     {
-      "resources": ["/darkmode-css/dark-theme.css", "/features/timestamp.js", "/darkmode-css/status-dark-theme.css", "/features/autocaption.js", "/features/is_live_watcher.js", "/features/darkmode_fix_links.js"],
-      "matches": ["*://floatplane.com/*", "*://www.floatplane.com/*", "*://beta.floatplane.com/*", "*://status.floatplane.com/*"]
+      "resources": [
+        "/darkmode-css/dark-theme.css",
+        "/darkmode-css/status-dark-theme.css",
+        "/features/is_live_watcher.js",
+        "/features/darkmode_fix_links.js",
+        "/features/live_polls.js"
+      ],
+      "matches": [
+        "*://floatplane.com/*",
+        "*://www.floatplane.com/*",
+        "*://beta.floatplane.com/*",
+        "*://status.floatplane.com/*",
+        "https://api.pollsplane.com/*"
+      ]
     }
   ],
   "icons": {
