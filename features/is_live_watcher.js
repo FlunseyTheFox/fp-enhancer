@@ -16,20 +16,20 @@ const updateLiveButton = (isLive) => {
   }
 };
 
-const getCreatorId = async (creatorName, baseUrl) => {
+const getLiveStreamId = async (creatorName, baseUrl) => {
   try {
     const response = await fetch(`${baseUrl}/api/v3/creator/named?creatorURL%5B0%5D=${creatorName}`);
     if (!response.ok) {
-      throw new Error("Failed to fetch creator ID");
+      throw new Error("Failed to fetch creator info");
     }
     const data = await response.json();
-    if (data && data[0] && data[0].id) {
-      return data[0].id;
+    if (data && data[0] && data[0].liveStream && data[0].liveStream.id) {
+      return data[0].liveStream.id;
     } else {
-      throw new Error("Creator ID not found in API response");
+      throw new Error("Livestream ID not found in API response");
     }
   } catch (error) {
-    console.error("Error getting creator ID:", error);
+    console.error("Error getting creator livestream ID:", error);
     return null;
   }
 };
@@ -52,32 +52,63 @@ const checkIfCreatorIsLive = async () => {
       baseUrl = 'https://beta.floatplane.com';
     }
 
-    const creatorId = await getCreatorId(creatorName, baseUrl);
-    if (!creatorId) {
+    const liveStreamId = await getLiveStreamId(creatorName, baseUrl);
+    if (!liveStreamId) {
+      updateLiveButton(false);
+      window.postMessage({ 
+        type: "checkLiveStatus", 
+        url: null,
+        cdn: null,
+        uri: null 
+      }, "*");
       return;
     }
 
-    const liveUrl = `${baseUrl}/api/v2/cdn/delivery?type=live&creator=${creatorId}`;
+    const liveUrl = `${baseUrl}/api/v3/delivery/info?scenario=live&entityId=${liveStreamId}`;
     const liveStatusResponse = await fetch(liveUrl);
     if (!liveStatusResponse.ok) {
       console.error("Failed to fetch live status.");
+      updateLiveButton(false);
+      window.postMessage({ 
+        type: "checkLiveStatus", 
+        url: liveUrl,
+        cdn: null,
+        uri: null 
+      }, "*");
       return;
     }
     const liveStatusData = await liveStatusResponse.json();
 
-    const isLive = liveStatusData && liveStatusData.cdn && liveStatusData.resource.uri;
+    let cdn = null;
+    let uri = null;
+    if (liveStatusData && liveStatusData.groups && liveStatusData.groups.length > 0) {
+      const group = liveStatusData.groups[0];
+      if (group.origins && group.origins.length > 0 && group.variants && group.variants.length > 0) {
+        cdn = group.origins[0].url;
+        uri = group.variants[0].url;
+      }
+    }
+
+    const isLive = !!(cdn && uri);
     
     updateLiveButton(isLive);
 
     window.postMessage({ 
       type: "checkLiveStatus", 
       url: liveUrl,
-      cdn: liveStatusData.cdn,
-      uri: liveStatusData.resource.uri 
+      cdn: cdn,
+      uri: uri 
     }, "*");
 
   } catch (error) {
     console.error("Error checking live status:", error);
+    updateLiveButton(false);
+    window.postMessage({ 
+      type: "checkLiveStatus", 
+      url: null,
+      cdn: null,
+      uri: null 
+    }, "*");
   }
 };
 
