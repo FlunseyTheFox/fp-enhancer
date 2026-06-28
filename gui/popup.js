@@ -4,7 +4,8 @@ document.addEventListener('DOMContentLoaded', function () {
         enableDarkModeFixLinks: document.getElementById('enableDarkModeFixLinks'),
         enableBetaRedirect: document.getElementById('enableBetaRedirect'),
         enableCheckIfCreatorLive: document.getElementById('enableCheckIfCreatorLive'),
-        enableVODPolls: document.getElementById('enableVODPolls')
+        enableVODPolls: document.getElementById('enableVODPolls'),
+        enableAccessibilityFix: document.getElementById('enableAccessibilityFix')
     };
     const vodPollsSettingsBtn = document.getElementById('vodPollsSettingsBtn');
     const vodPollsFlyout = document.getElementById('vodPollsFlyout');
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (data.enableDarkTheme === undefined) checkboxes.enableDarkTheme.checked = true;
         if (data.enableCheckIfCreatorLive === undefined) checkboxes.enableCheckIfCreatorLive.checked = true;
         if (data.enableVODPolls === undefined) checkboxes.enableVODPolls.checked = true;
+        if (data.enableAccessibilityFix === undefined) checkboxes.enableAccessibilityFix.checked = true;
 
         if (checkboxes.enableDarkTheme.checked) {
             document.body.classList.add('dark-theme');

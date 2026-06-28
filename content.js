@@ -1,11 +1,12 @@
-chrome.storage.sync.get(['enableDarkTheme', 'enableDarkModeFixLinks', 'enableBetaRedirect', 'enableCheckIfCreatorLive', 'enableVODPolls', 'pollDisplayMode'], function (data) {
+chrome.storage.sync.get(['enableDarkTheme', 'enableDarkModeFixLinks', 'enableBetaRedirect', 'enableCheckIfCreatorLive', 'enableVODPolls', 'pollDisplayMode', 'enableAccessibilityFix'], function (data) {
   const defaultValues = {
     enableDarkTheme: true,
     enableDarkModeFixLinks: false,
     enableBetaRedirect: false,
     enableCheckIfCreatorLive: true,
     enableVODPolls: true,
-    pollDisplayMode: 'realtime'
+    pollDisplayMode: 'realtime',
+    enableAccessibilityFix: true
   };
 
   const storedData = Object.assign({}, defaultValues, data);
@@ -28,6 +29,9 @@ chrome.storage.sync.get(['enableDarkTheme', 'enableDarkModeFixLinks', 'enableBet
   if (storedData.enableVODPolls) {
     loadPollsScript(storedData);
   }
+  if (storedData.enableAccessibilityFix) {
+    applyAccessibilityFix();
+  }
 });
 
 // Apply dark theme
@@ -43,6 +47,44 @@ function applyDarkTheme() {
   }
   document.head.appendChild(styleLink);
 }
+
+function applyAccessibilityFix() {
+  if (document.getElementById('fp-enhancer-accessibility-fix')) return;
+
+  // 1. Inject the CSS stylesheet
+  const styleLink = document.createElement('link');
+  styleLink.id = 'fp-enhancer-accessibility-fix';
+  styleLink.rel = 'stylesheet';
+  styleLink.href = chrome.runtime.getURL('/features/focus_highlights.css');
+  console.log('Floatplane Enhancer: Applying accessibility fix CSS');
+  document.head.appendChild(styleLink);
+
+  // 2. Inject the JS script
+  const accessibilityScript = document.createElement('script');
+  accessibilityScript.id = 'fp-enhancer-accessibility-js';
+  accessibilityScript.src = chrome.runtime.getURL('/features/accessibility.js');
+  console.log('Floatplane Enhancer: Injecting accessibility fix script');
+  document.head.appendChild(accessibilityScript);
+}
+
+function removeAccessibilityFix() {
+  const styleLink = document.getElementById('fp-enhancer-accessibility-fix');
+  if (styleLink) {
+    console.log('Floatplane Enhancer: Removing accessibility fix CSS');
+    styleLink.remove();
+  }
+
+  const accessibilityScript = document.getElementById('fp-enhancer-accessibility-js');
+  if (accessibilityScript) {
+    console.log('Floatplane Enhancer: Removing accessibility script tag');
+    accessibilityScript.remove();
+  }
+
+  // Dispatch teardown event to the page context script
+  console.log('Floatplane Enhancer: Dispatching fp-accessibility-teardown event');
+  document.dispatchEvent(new Event('fp-accessibility-teardown'));
+}
+
 
 function loadDarkmodeFixLinks() {
   const darkmodeFixLinksScript = document.createElement('script');
@@ -170,5 +212,12 @@ chrome.storage.onChanged.addListener(function (changes) {
         document.dispatchEvent(new Event('fp-polls-teardown'));
       }
     });
+  }
+  if (changes.enableAccessibilityFix) {
+    if (changes.enableAccessibilityFix.newValue) {
+      applyAccessibilityFix();
+    } else {
+      removeAccessibilityFix();
+    }
   }
 });

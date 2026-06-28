@@ -1,0 +1,34 @@
+/* Restores focus highlights during tab-browsing/keyboard navigation */
+*:focus-visible {
+  outline: 2px solid #00adef !important;
+  outline-offset: -2px !important;
+}
+
+/* Highlight the entire feed/recommended item container on focus */
+.fp-enhancer-post-card:has(a:focus-visible) {
+  outline: 2px solid #00adef !important;
+  outline-offset: 2px !important;
+  border-radius: 8px !important;
+}
+
+/* Suppress individual outlines on links inside to prevent double rings */
+.fp-enhancer-post-card a:focus-visible {
+  outline: none !important;
+}
+
+/* Hide collapsed subchannel panels from screen/tabbing using has selector and style rules */
+a:has([class*="_close_"])+[class*="_linkDropdownPanel_"],
+[class*="_linkDropdownPanel_"][style*="max-height: 0px"],
+[class*="_linkDropdownPanel_"][style*="max-height:0px"] {
+  visibility: hidden !important;
+}
+
+/* Hide user menu dropdown from screen readers and tabbing when closed */
+[class*="_dropdown_"] {
+  visibility: hidden !important;
+}
+
+/* Show user menu dropdown when open */
+[class*="_dropdown_"].fp-enhancer-menu-open {
+  visibility: visible !important;
+}
