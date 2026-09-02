@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Floatplane Enhancer",
-    "version": "2.6",
+    "version": "2.7",
     "description": "Enhances the Floatplane experience",
     "permissions": [
       "activeTab",
@@ -40,7 +40,8 @@
       "/features/live_polls.js",
       "/features/darkmode_fix_links.js",
       "/features/focus_highlights.css",
-      "/features/accessibility.js"
+      "/features/accessibility.js",
+      "/features/random_post.js"
     ],
     "icons": {
       "96": "icons/icon96.png",

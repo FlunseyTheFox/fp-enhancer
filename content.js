@@ -1,4 +1,4 @@
-chrome.storage.sync.get(['enableDarkTheme', 'enableDarkModeFixLinks', 'enableBetaRedirect', 'enableCheckIfCreatorLive', 'enableVODPolls', 'pollDisplayMode', 'enableAccessibilityFix'], function (data) {
+chrome.storage.sync.get(['enableDarkTheme', 'enableDarkModeFixLinks', 'enableBetaRedirect', 'enableCheckIfCreatorLive', 'enableVODPolls', 'pollDisplayMode', 'enableAccessibilityFix', 'enableRandomPostButton', 'randomPostDisabledCreators', 'randomPostSemiShuffle'], function (data) {
   const defaultValues = {
     enableDarkTheme: true,
     enableDarkModeFixLinks: false,
@@ -6,7 +6,10 @@ chrome.storage.sync.get(['enableDarkTheme', 'enableDarkModeFixLinks', 'enableBet
     enableCheckIfCreatorLive: true,
     enableVODPolls: true,
     pollDisplayMode: 'realtime',
-    enableAccessibilityFix: true
+    enableAccessibilityFix: true,
+    enableRandomPostButton: false,
+    randomPostDisabledCreators: [],
+    randomPostSemiShuffle: false
   };
 
   const storedData = Object.assign({}, defaultValues, data);
@@ -31,6 +34,9 @@ chrome.storage.sync.get(['enableDarkTheme', 'enableDarkModeFixLinks', 'enableBet
   }
   if (storedData.enableAccessibilityFix) {
     applyAccessibilityFix();
+  }
+  if (storedData.enableRandomPostButton) {
+    applyRandomPostButton();
   }
 });
 
@@ -83,6 +89,50 @@ function removeAccessibilityFix() {
   // Dispatch teardown event to the page context script
   console.log('Floatplane Enhancer: Dispatching fp-accessibility-teardown event');
   document.dispatchEvent(new Event('fp-accessibility-teardown'));
+}
+
+function applyRandomPostButton() {
+  chrome.storage.sync.get(['enableRandomPostButton', 'randomPostDisabledCreators', 'randomPostSemiShuffle'], (data) => {
+    const isEnabled = data.enableRandomPostButton === true;
+    const disabledStr = JSON.stringify(data.randomPostDisabledCreators || []);
+    const isSemiShuffle = data.randomPostSemiShuffle === true;
+    let randomPostScript = document.getElementById('fp-enhancer-random-post-script');
+
+    if (randomPostScript) {
+      randomPostScript.setAttribute('data-enabled', isEnabled);
+      randomPostScript.setAttribute('data-disabled-creators', disabledStr);
+      randomPostScript.setAttribute('data-semi-shuffle', isSemiShuffle);
+      // Dispatch events to propagate changes to the running script
+      document.dispatchEvent(new CustomEvent('fp-random-post-toggle', { detail: isEnabled }));
+      document.dispatchEvent(new CustomEvent('fp-random-post-settings-change', { detail: disabledStr }));
+      document.dispatchEvent(new CustomEvent('fp-random-post-semi-shuffle-change', { detail: isSemiShuffle }));
+      return;
+    }
+
+    // Only inject on startup/toggle if it's currently enabled
+    if (isEnabled) {
+      randomPostScript = document.createElement('script');
+      randomPostScript.id = 'fp-enhancer-random-post-script';
+      randomPostScript.src = chrome.runtime.getURL('/features/random_post.js');
+      randomPostScript.setAttribute('data-enabled', 'true');
+      randomPostScript.setAttribute('data-disabled-creators', disabledStr);
+      randomPostScript.setAttribute('data-semi-shuffle', isSemiShuffle);
+      console.log('Floatplane Enhancer: Injecting random post script. Disabled creators:', disabledStr, 'semi-shuffle:', isSemiShuffle);
+      document.head.appendChild(randomPostScript);
+    }
+  });
+}
+
+function removeRandomPostButton() {
+  const randomPostScript = document.getElementById('fp-enhancer-random-post-script');
+  if (randomPostScript) {
+    console.log('Floatplane Enhancer: Removing random post script tag');
+    randomPostScript.remove();
+  }
+
+  // Dispatch teardown event to the page context script
+  console.log('Floatplane Enhancer: Dispatching fp-random-post-teardown event');
+  document.dispatchEvent(new Event('fp-random-post-teardown'));
 }
 
 
@@ -218,6 +268,13 @@ chrome.storage.onChanged.addListener(function (changes) {
       applyAccessibilityFix();
     } else {
       removeAccessibilityFix();
+    }
+  }
+  if (changes.enableRandomPostButton || changes.randomPostDisabledCreators || changes.randomPostSemiShuffle) {
+    if (changes.enableRandomPostButton && changes.enableRandomPostButton.newValue !== true) {
+      removeRandomPostButton();
+    } else {
+      applyRandomPostButton();
     }
   }
 });

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Floatplane Enhancer",
-  "version": "2.6",
+  "version": "2.7",
   "description": "Enhances the Floatplane experience",
   "permissions": ["activeTab", "storage"],
   "background": {
@@ -33,7 +33,8 @@
         "/features/darkmode_fix_links.js",
         "/features/live_polls.js",
         "/features/focus_highlights.css",
-        "/features/accessibility.js"
+        "/features/accessibility.js",
+        "/features/random_post.js"
       ],
       "matches": [
         "*://floatplane.com/*",

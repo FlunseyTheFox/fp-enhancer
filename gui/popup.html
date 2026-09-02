@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,6 +18,10 @@
       --btn-bg: #3b82f6;
       --btn-hover-bg: #1d4ed8;
       --icon-color: #6b7280;
+    }
+
+    html {
+      overflow: hidden;
     }
 
     body {
@@ -64,56 +69,84 @@
       padding: 12px 0;
       border-bottom: 1px solid var(--border-color);
     }
-    .setting:last-child { border-bottom: none; }
 
-    .setting input[type="checkbox"] { margin-right: 10px; }
-    .setting label { flex-grow: 1; text-align: left; cursor: pointer; }
-    .setting .icon-button {
-        cursor: pointer;
-        background: none;
-        border: none;
-        padding: 5px;
-        color: var(--icon-color);
+    .setting:last-child {
+      border-bottom: none;
     }
-    .setting .icon-button:hover { color: var(--text-color); }
+
+    .setting input[type="checkbox"] {
+      margin-right: 10px;
+    }
+
+    .setting label {
+      flex-grow: 1;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .setting .icon-button {
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 5px;
+      color: var(--icon-color);
+    }
+
+    .setting .icon-button:hover {
+      color: var(--text-color);
+    }
 
     .flyout-panel {
-        position: absolute;
-        top: 0;
-        right: -100%;
-        width: 100%;
-        height: 100%;
-        background-color: var(--bg-color);
-        box-shadow: -2px 0 5px rgba(0,0,0,0.2);
-        transition: right 0.3s ease-in-out;
-        z-index: 10;
-        padding: 15px;
-        box-sizing: border-box;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--bg-color);
+      box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
+      z-index: 10;
+      padding: 15px;
+      box-sizing: border-box;
+      transform: translateX(100%);
+      visibility: hidden;
+      pointer-events: none;
+      overflow-y: auto;
     }
-    .flyout-panel.visible { right: 0; }
+
+    .flyout-panel.visible {
+      transform: translateX(0);
+      visibility: visible;
+      pointer-events: auto;
+    }
+
     .flyout-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
     }
+
     .flyout-header .back-button {
-        margin-right: 10px;
-        background: none;
-        border: none;
-        font-size: 24px;
-        cursor: pointer;
-        color: var(--text-color);
+      margin-right: 10px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-color);
     }
+
     .flyout-header h2 {
-        font-size: 16px;
-        margin: 0;
+      font-size: 16px;
+      margin: 0;
     }
+
     .radio-setting {
-        display: block;
-        margin-bottom: 10px;
+      display: block;
+      margin-bottom: 10px;
     }
+
     .radio-setting label {
-        cursor: pointer;
+      cursor: pointer;
     }
 
     .acknowledgments {
@@ -122,8 +155,15 @@
       color: #6b7280;
       text-align: center;
     }
-    body.dark-theme .acknowledgments { color: #9ca3af; }
-    .acknowledgments a { color: var(--link-color); text-decoration: none; }
+
+    body.dark-theme .acknowledgments {
+      color: #9ca3af;
+    }
+
+    .acknowledgments a {
+      color: var(--link-color);
+      text-decoration: none;
+    }
 
     .buttons {
       display: flex;
@@ -131,6 +171,7 @@
       gap: 10px;
       flex-wrap: wrap;
     }
+
     .btn {
       background-color: var(--btn-bg);
       color: #fff;
@@ -142,9 +183,40 @@
       font-size: 13px;
       transition: background-color 0.3s ease;
     }
-    .btn:hover { background-color: var(--btn-hover-bg); }
+
+    .btn:hover {
+      background-color: var(--btn-hover-bg);
+    }
+
+    .creator-item {
+      display: flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 6px;
+      background-color: var(--container-bg);
+      border: 1px solid var(--border-color);
+      transition: background-color 0.2s ease;
+    }
+
+    .creator-item:hover {
+      background-color: var(--border-color);
+    }
+
+    .creator-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      margin-right: 10px;
+      object-fit: cover;
+    }
+
+    .creator-name {
+      flex-grow: 1;
+      font-weight: 500;
+    }
   </style>
 </head>
+
 <body>
   <h1>Floatplane Enhancer</h1>
   <div class="settings-container">
@@ -168,41 +240,73 @@
       <input type="checkbox" id="enableAccessibilityFix">
       <label for="enableAccessibilityFix">Fix accessibility</label>
     </div>
-     <div class="setting">
+    <div class="setting">
+      <input type="checkbox" id="enableRandomPostButton">
+      <label for="enableRandomPostButton">Add random post button</label>
+      <button id="randomPostSettingsBtn" class="icon-button" aria-label="Random Post Settings" disabled
+        style="opacity: 0.5; pointer-events: none;">⚙️</button>
+    </div>
+    <div class="setting">
       <input type="checkbox" id="enableVODPolls">
       <label for="enableVODPolls">Show VOD Poll Data</label>
       <button id="vodPollsSettingsBtn" class="icon-button" aria-label="Poll Settings">⚙️</button>
     </div>
   </div>
   <div class="acknowledgments">
-    Thanks to <a href="https://furrydev.xyz" target="_blank">Zenull</a> for code and <a href="https://gc.omg.lol/" target="_blank">Gradient Cat</a> for the icon.
+    Thanks to <a href="https://furrydev.xyz" target="_blank">Zenull</a> for code and <a href="https://gc.omg.lol/"
+      target="_blank">Gradient Cat</a> for the icon.
   </div>
   <div class="buttons">
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLSeLFf7Gh2aHlOUMFXQElTMHWQAJXQ6DqqvBoucMthfc8trEIA/viewform?usp=sf_link" class="btn" target="_blank">Feedback</a>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSeLFf7Gh2aHlOUMFXQElTMHWQAJXQ6DqqvBoucMthfc8trEIA/viewform?usp=sf_link"
+      class="btn" target="_blank">Feedback</a>
     <a href="https://x.com/flunseydevelops" class="btn" target="_blank">Updates</a>
     <a href="https://github.com/FlunseyTheFox/fp-enhancer" class="btn" target="_blank">Contribute</a>
   </div>
 
   <div id="vodPollsFlyout" class="flyout-panel">
     <div class="flyout-header">
-        <button id="backFromPolls" class="back-button" aria-label="Back to main settings">&larr;</button>
-        <h2>VOD Poll Settings</h2>
+      <button id="backFromPolls" class="back-button" aria-label="Back to main settings">&larr;</button>
+      <h2>VOD Poll Settings</h2>
     </div>
     <div class="radio-setting">
-        <label>
-            <input type="radio" name="pollDisplayMode" value="final" checked>
-            Show final results only
-        </label>
+      <label>
+        <input type="radio" name="pollDisplayMode" value="final">
+        Show final results only
+      </label>
     </div>
     <div class="radio-setting">
-        <label>
-            <input type="radio" name="pollDisplayMode" value="realtime">
-            Re-create poll in real-time
-        </label>
+      <label>
+        <input type="radio" name="pollDisplayMode" value="realtime" checked>
+        Re-create poll in real-time
+      </label>
     </div>
+  </div>
+
+  <div id="randomPostFlyout" class="flyout-panel">
+    <div class="flyout-header">
+      <button id="backFromRandomPost" class="back-button" aria-label="Back to main settings">&larr;</button>
+      <h2>Random Post Settings</h2>
+    </div>
+    <div class="setting"
+      style="border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 10px;">
+      <input type="checkbox" id="randomPostSelectAll" checked style="margin-right: 10px;">
+      <label for="randomPostSelectAll" style="font-weight: bold;">Select All</label>
+    </div>
+    <div class="setting"
+      style="border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 10px;">
+      <input type="checkbox" id="randomPostSemiShuffle" style="margin-right: 10px;">
+      <label for="randomPostSemiShuffle" style="font-weight: bold;">Semi-shuffle (avoid back-to-back posts from 1
+        creator)</label>
+    </div>
+    <div id="randomPostCreatorList"
+      style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+      <div style="text-align: center; padding: 20px; color: var(--icon-color);">Loading subscriptions...</div>
+    </div>
+    <p>This adds a button to the user icon popout with a "random post" button that opens a random post from Floatplane
+      creators you're subscribed to.</p>
   </div>
 
   <script src="popup.js"></script>
 </body>
-</html>
 
+</html>
