@@ -4,6 +4,14 @@
   outline-offset: -2px !important;
 }
 
+/* Fixes the video player outline */
+video:focus-visible,
+.av-player-control-wrapper:focus-visible,
+.av-player-control-wrapper video:focus-visible,
+.av-player-control-wrapper [tabindex="0"]:not(button):not(a):not(input):not(select):not(textarea):not([role="button"]):not([role="slider"]):not([role="menuitem"]):focus-visible {
+  outline: none !important;
+}
+
 /* Highlight the entire feed/recommended item container on focus */
 .fp-enhancer-post-card:has(a:focus-visible) {
   outline: 2px solid #00adef !important;

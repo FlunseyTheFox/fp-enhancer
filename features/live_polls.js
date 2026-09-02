@@ -1,32 +1,84 @@
 // == Live Polls Feature ==
+const POLL_GRACE_SECONDS = 7;
+const POLL_STACK_GAP = 12;
+const POLL_DEFAULT_OFFSET = 20;
+const POLL_POPUP_CLASS = 'fp-enhancer-poll-popup';
+const POLL_STYLES_ID = 'fp-enhancer-poll-styles';
+
 let pollObserver = null;
-let lastActivePoll = null;
-let pollTimeout = null;
 let allPollsData = [];
 let videoElement = null;
 let pollTimeListener = null;
 let userSettings = {};
-let lastPollPosition = null; // { top: number, left: number }
 let lastCheckTime = 0; // For debouncing navigation checks
+let pollPositions = {}; // { [pollId]: { top, left } }
+let pollTimeouts = {}; // { [pollId]: timeoutId }
+let pollZIndex = 1000;
+
+function popupIdForPoll(pollId) {
+    return `fp-enhancer-poll-popup-${pollId}`;
+}
+
+function getPollPopup(pollId) {
+    return document.getElementById(popupIdForPoll(pollId));
+}
+
+function getAllPollPopups() {
+    return [...document.querySelectorAll(`.${POLL_POPUP_CLASS}`)];
+}
+
+function getPollTiming(poll) {
+    const start = poll?.associated_posts?.floatplane?.start_seconds;
+    const duration = (new Date(poll.end_date) - new Date(poll.start_date)) / 1000;
+    if (typeof start !== 'number' || isNaN(duration) || duration <= 0) return null;
+    return { start, duration, end: start + duration };
+}
+
+function clearPollTimeout(pollId) {
+    if (pollTimeouts[pollId]) {
+        clearTimeout(pollTimeouts[pollId]);
+        delete pollTimeouts[pollId];
+    }
+}
+
+function clearAllPollTimeouts() {
+    Object.keys(pollTimeouts).forEach(clearPollTimeout);
+}
+
+function rememberPollPosition(popup) {
+    if (!popup) return;
+    const pollId = popup.dataset.pollId;
+    if (!pollId) return;
+    pollPositions[pollId] = { top: popup.offsetTop, left: popup.offsetLeft };
+}
+
+function removePollPopup(popup) {
+    if (!popup) return;
+    const pollId = popup.dataset.pollId;
+    rememberPollPosition(popup);
+    popup.remove();
+    if (pollId) clearPollTimeout(pollId);
+}
+
+function schedulePollRemoval(pollId, delayMs) {
+    clearPollTimeout(pollId);
+    pollTimeouts[pollId] = setTimeout(() => {
+        const popup = getPollPopup(pollId);
+        if (popup) removePollPopup(popup);
+        delete pollTimeouts[pollId];
+    }, Math.max(0, delayMs));
+}
 
 function cleanup() {
     if (videoElement && pollTimeListener) {
         videoElement.removeEventListener('timeupdate', pollTimeListener);
     }
-    const pollPopup = document.getElementById('fp-enhancer-poll-popup');
-    if (pollPopup) {
-        lastPollPosition = { top: pollPopup.offsetTop, left: pollPopup.offsetLeft };
-        pollPopup.remove();
-    }
-    if (pollTimeout) {
-        clearTimeout(pollTimeout);
-        pollTimeout = null;
-    }
+    getAllPollPopups().forEach(removePollPopup);
+    clearAllPollTimeouts();
 
     allPollsData = [];
     videoElement = null;
     pollTimeListener = null;
-    lastActivePoll = null;
     if (pollObserver) pollObserver.disconnect();
 }
 
@@ -125,60 +177,86 @@ function waitForVideoElement() {
     }, 500);
 }
 
+function getVisiblePolls(currentTime) {
+    const visible = [];
+    for (const poll of allPollsData) {
+        const timing = getPollTiming(poll);
+        if (!timing) continue;
+
+        const inActive = currentTime >= timing.start && currentTime < timing.end;
+        const inGrace = currentTime >= timing.end && currentTime < timing.end + POLL_GRACE_SECONDS;
+        if (!inActive && !inGrace) continue;
+
+        const displayMode = poll.untracked ? 'final' : userSettings.pollDisplayMode;
+        const modeText = (displayMode === 'realtime' && inActive) ? 'Recreation' : 'Final Results';
+        visible.push({ poll, timing, displayMode, modeText, inActive, inGrace });
+    }
+
+    visible.sort((a, b) => {
+        if (a.timing.start !== b.timing.start) return a.timing.start - b.timing.start;
+        return String(a.poll.poll_id).localeCompare(String(b.poll.poll_id));
+    });
+    return visible;
+}
+
 function setupVideoListener() {
     if (pollTimeListener) videoElement.removeEventListener('timeupdate', pollTimeListener);
 
     pollTimeListener = () => {
         const currentTime = videoElement.currentTime;
-        const pollPopup = document.getElementById('fp-enhancer-poll-popup');
-        let activePoll = allPollsData.find(p => {
-            const start = p.associated_posts.floatplane.start_seconds;
-            const duration = (new Date(p.end_date) - new Date(p.start_date)) / 1000;
-            if (isNaN(duration) || duration <= 0) return false;
-            return currentTime >= start && currentTime < (start + duration);
-        });
+        const visiblePolls = getVisiblePolls(currentTime);
+        const visibleIds = new Set(visiblePolls.map(item => String(item.poll.poll_id)));
 
-        if (activePoll) {
-            if (pollTimeout) {
-                clearTimeout(pollTimeout);
-                pollTimeout = null;
+        for (const popup of getAllPollPopups()) {
+            if (!visibleIds.has(String(popup.dataset.pollId))) {
+                removePollPopup(popup);
             }
-            const currentDisplayMode = activePoll.untracked ? 'final' : userSettings.pollDisplayMode;
-            const shouldRedisplay = !pollPopup || pollPopup.dataset.pollId !== activePoll.poll_id || pollPopup.dataset.displayMode !== currentDisplayMode;
+        }
+
+        for (const item of visiblePolls) {
+            const pollId = item.poll.poll_id;
+            const popup = getPollPopup(pollId);
+            const shouldRedisplay = !popup
+                || popup.dataset.modeText !== item.modeText
+                || popup.dataset.displayMode !== item.displayMode;
+
             if (shouldRedisplay) {
-                console.log('FP Enhancer (Polls): Displaying popup for poll:', activePoll.poll_id);
-                displayPollPopup(activePoll, currentDisplayMode === 'realtime' ? 'Recreation' : 'Final Results');
+                console.log('FP Enhancer (Polls): Displaying popup for poll:', pollId, item.modeText);
+                displayPollPopup(item.poll, item.modeText);
             }
-            if (currentDisplayMode === 'realtime') {
-                updatePollPopup(activePoll, currentTime);
+            if (item.displayMode === 'realtime' && item.inActive) {
+                updatePollPopup(item.poll, currentTime);
             }
-            lastActivePoll = { poll: activePoll, endTime: activePoll.associated_posts.floatplane.start_seconds + (new Date(activePoll.end_date) - new Date(activePoll.start_date)) / 1000 };
-        } else if (lastActivePoll && currentTime < lastActivePoll.endTime + 7 && pollPopup) {
-            if (userSettings.pollDisplayMode === 'realtime' && !lastActivePoll.poll.untracked) {
-                const header = pollPopup.querySelector('#fp-poll-popup-header h4');
-                if (header && !header.textContent.includes('Final Results')) {
-                    console.log('FP Enhancer (Polls): Showing final results for poll:', lastActivePoll.poll.poll_id);
-                    displayPollPopup(lastActivePoll.poll, 'Final Results');
-                }
-            }
-            if (!pollTimeout) {
-                pollTimeout = setTimeout(() => {
-                    if (pollPopup) pollPopup.remove();
-                    lastActivePoll = null;
-                    pollTimeout = null;
-                }, (lastActivePoll.endTime + 7 - currentTime) * 1000);
-            }
-        } else if (pollPopup) {
-            pollPopup.remove();
-            lastActivePoll = null;
-            if (pollTimeout) {
-                clearTimeout(pollTimeout);
-                pollTimeout = null;
+
+            if (item.inActive) {
+                clearPollTimeout(pollId);
+            } else if (item.inGrace) {
+                schedulePollRemoval(pollId, (item.timing.end + POLL_GRACE_SECONDS - currentTime) * 1000);
             }
         }
     };
     videoElement.addEventListener('timeupdate', pollTimeListener);
     pollTimeListener();
+}
+
+function ensurePollStyles() {
+    if (document.getElementById(POLL_STYLES_ID)) return;
+    const style = document.createElement('style');
+    style.id = POLL_STYLES_ID;
+    style.textContent = `.fp-poll-option{margin-bottom:12px;}.fp-poll-labels{display:flex;justify-content:space-between;margin-bottom:5px;font-size:14px;color:#eee;}.fp-poll-bar-bg{background-color:#555;border-radius:4px;overflow:hidden;height:20px;}.fp-poll-bar{background-color:#3b82f6;height:100%;transition:width .3s ease-out;}`;
+    document.head.appendChild(style);
+}
+
+function getStackedPosition() {
+    const popups = getAllPollPopups();
+    if (popups.length === 0) {
+        return { top: POLL_DEFAULT_OFFSET, right: POLL_DEFAULT_OFFSET };
+    }
+    let lowestBottom = POLL_DEFAULT_OFFSET;
+    for (const el of popups) {
+        lowestBottom = Math.max(lowestBottom, el.offsetTop + el.offsetHeight);
+    }
+    return { top: lowestBottom + POLL_STACK_GAP, right: POLL_DEFAULT_OFFSET };
 }
 
 function displayPollPopup(poll, modeText) {
@@ -187,10 +265,14 @@ function displayPollPopup(poll, modeText) {
         console.warn('FP Enhancer (Polls): .av-player-control-wrapper not found, using body.');
         videoContainer = document.body;
     }
-    
-    const existingPopup = document.getElementById('fp-enhancer-poll-popup');
+
+    ensurePollStyles();
+
+    const existingPopup = getPollPopup(poll.poll_id);
+    let savedPosition = pollPositions[poll.poll_id];
     if (existingPopup) {
-        lastPollPosition = { top: existingPopup.offsetTop, left: existingPopup.offsetLeft };
+        savedPosition = { top: existingPopup.offsetTop, left: existingPopup.offsetLeft };
+        pollPositions[poll.poll_id] = savedPosition;
         existingPopup.remove();
     }
 
@@ -201,7 +283,7 @@ function displayPollPopup(poll, modeText) {
     const optionsHtml = poll.options.map((option, index) => {
         const voteCount = tally.counts[index] || 0;
         const percentage = tally.total_votes > 0 ? (voteCount / tally.total_votes * 100) : 0;
-        return `<div id="fp-poll-option-${index}" class="fp-poll-option">
+        return `<div class="fp-poll-option" data-option-index="${index}">
                     <div class="fp-poll-labels"><span>${option}</span><span class="fp-poll-percentage">${percentage.toFixed(1)}% (${voteCount} votes)</span></div>
                     <div class="fp-poll-bar-bg"><div class="fp-poll-bar" style="width: ${percentage}%;"></div></div>
                 </div>`;
@@ -215,25 +297,27 @@ function displayPollPopup(poll, modeText) {
         </div>` : '';
     
     const popup = document.createElement('div');
-    popup.id = 'fp-enhancer-poll-popup';
+    popup.id = popupIdForPoll(poll.poll_id);
+    popup.className = POLL_POPUP_CLASS;
     popup.dataset.pollId = poll.poll_id;
     popup.dataset.displayMode = effectiveDisplayMode;
-    popup.style.cssText = `position: absolute; width: 320px; background-color: rgba(20,20,20,0.85); backdrop-filter: blur(10px); border-radius: 10px; color: white; z-index: 1000; font-family: 'Segoe UI', sans-serif; box-shadow: 0 5px 15px rgba(0,0,0,0.5);`;
+    popup.dataset.modeText = modeText;
+    popup.style.cssText = `position: absolute; width: 320px; background-color: rgba(20,20,20,0.85); backdrop-filter: blur(10px); border-radius: 10px; color: white; z-index: ${++pollZIndex}; font-family: 'Segoe UI', sans-serif; box-shadow: 0 5px 15px rgba(0,0,0,0.5);`;
     
-    if (lastPollPosition) {
-        popup.style.top = `${lastPollPosition.top}px`;
-        popup.style.left = `${lastPollPosition.left}px`;
+    if (savedPosition) {
+        popup.style.top = `${savedPosition.top}px`;
+        popup.style.left = `${savedPosition.left}px`;
     } else {
-        popup.style.top = '20px';
-        popup.style.right = '20px';
+        const stacked = getStackedPosition();
+        popup.style.top = `${stacked.top}px`;
+        popup.style.right = `${stacked.right}px`;
     }
 
     popup.innerHTML = `
-        <style>.fp-poll-option{margin-bottom:12px;}.fp-poll-labels{display:flex;justify-content:space-between;margin-bottom:5px;font-size:14px;color:#eee;}.fp-poll-bar-bg{background-color:#555;border-radius:4px;overflow:hidden;height:20px;}.fp-poll-bar{background-color:#3b82f6;height:100%;transition:width .3s ease-out;}</style>
-        <div id="fp-poll-popup-header" style="padding:10px 15px;background-color:rgba(0,0,0,.3);cursor:move;border-bottom:1px solid rgba(255,255,255,.2);"><h4 style="margin:0;font-size:16px;font-weight:500;">${titleHtml}</h4></div>
+        <div class="fp-poll-popup-header" style="padding:10px 15px;background-color:rgba(0,0,0,.3);cursor:move;border-bottom:1px solid rgba(255,255,255,.2);"><h4 style="margin:0;font-size:16px;font-weight:500;">${titleHtml}</h4></div>
         <div style="padding:15px;">${optionsHtml}</div>
         ${disclaimerHtml}
-        <div style="font-size:11px;text-align:right;color:#aaa;padding: ${disclaimerHtml ? '5px 15px 10px' : '0 15px 10px'};">Data provided by <a href="https://pollsplane.com" target="_blank" style="color:#60a5fa;text-decoration:none;">Pollsplane</a></div>`;
+        <div style="font-size:11px;display:flex;justify-content:space-between;align-items:center;gap:8px;color:#aaa;padding: ${disclaimerHtml ? '5px 15px 10px' : '0 15px 10px'};"><span style="color:#ccc;white-space:nowrap;">Floatplane Enhancer</span><span style="white-space:nowrap;">Data by <a href="https://pollsplane.com" target="_blank" style="color:#60a5fa;text-decoration:none;">Pollsplane</a></span></div>`;
     
     videoContainer.appendChild(popup);
     console.log('FP Enhancer (Polls): Popup appended for poll:', poll.poll_id);
@@ -250,7 +334,7 @@ function updatePollPopup(poll, videoTime) {
     const currentTally = poll.details.vote_history.reduce((prev, curr) => 
         curr.time_offset_seconds <= pollTimeOffset ? curr : prev, { counts: [], total_votes: 0 });
 
-    const popup = document.getElementById('fp-enhancer-poll-popup');
+    const popup = getPollPopup(poll.poll_id);
     if (!popup) {
         console.warn('FP Enhancer (Polls): Popup not found for update:', poll.poll_id);
         return;
@@ -259,21 +343,24 @@ function updatePollPopup(poll, videoTime) {
     poll.options.forEach((option, index) => {
         const voteCount = currentTally.counts[index] || 0;
         const percentage = currentTally.total_votes > 0 ? (voteCount / currentTally.total_votes * 100) : 0;
-        const percentageEl = popup.querySelector(`#fp-poll-option-${index} .fp-poll-percentage`);
-        const barEl = popup.querySelector(`#fp-poll-option-${index} .fp-poll-bar`);
+        const optionEl = popup.querySelector(`.fp-poll-option[data-option-index="${index}"]`);
+        if (!optionEl) return;
+        const percentageEl = optionEl.querySelector('.fp-poll-percentage');
+        const barEl = optionEl.querySelector('.fp-poll-bar');
         if (percentageEl) percentageEl.textContent = `${percentage.toFixed(1)}% (${voteCount} votes)`;
         if (barEl) barEl.style.width = `${percentage}%`;
     });
 }
 
 function makeDraggable(element) {
-    const header = element.querySelector("#fp-poll-popup-header");
+    const header = element.querySelector(".fp-poll-popup-header");
     const dragMouseDown = e => {
         e.preventDefault();
+        element.style.zIndex = String(++pollZIndex);
         let pos3 = e.clientX, pos4 = e.clientY;
         document.onmouseup = () => {
             document.onmouseup = document.onmousemove = null;
-            lastPollPosition = { top: element.offsetTop, left: element.offsetLeft };
+            pollPositions[element.dataset.pollId] = { top: element.offsetTop, left: element.offsetLeft };
         };
         document.onmousemove = e => {
             e.preventDefault();
@@ -281,6 +368,7 @@ function makeDraggable(element) {
             pos3 = e.clientX; pos4 = e.clientY;
             element.style.top = `${element.offsetTop - pos2}px`;
             element.style.left = `${element.offsetLeft - pos1}px`;
+            element.style.right = 'auto';
         };
     };
     if (header) header.onmousedown = dragMouseDown;

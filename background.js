@@ -21,7 +21,9 @@ chrome.runtime.onInstalled.addListener(function () {
     enableBetaRedirect: false,
     enableCheckIfCreatorLive: true,
     enableVODPolls: true,
-    pollDisplayMode: 'final'
+    pollDisplayMode: 'realtime',
+    enableRandomPostButton: false,
+    randomPostSemiShuffle: false
   };
 
   chrome.storage.sync.get(Object.keys(defaultValues), function (data) {
